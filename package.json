@@ -22,6 +22,7 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
+    "lefthook": "^1.4.1",
     "prettier": "^2.8.7",
     "solhint": "^3.4.0"
   },
@@ -39,7 +40,7 @@
     "clean": "rm -rf cache out",
     "lint": "forge fmt --check && solhint \"{script,src,test}/**/*.sol\"",
     "lint:write": "forge fmt && solhint \"{script,src,test}/**/*.sol\" --fix",
-    "prettier:check": "prettier --check \"**/*.{json,md,yml}\"",
+    "prettier": "prettier --check \"**/*.{json,md,yml}\"",
     "prettier:write": "prettier --write \"**/*.{json,md,yml}\"",
     "quality": "npm run lint && npm run prettier",
     "hooks": "lefthook run pre-push",

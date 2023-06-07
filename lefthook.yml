@@ -1,0 +1,15 @@
+pre-push:
+  parallel: true
+  commands:
+    lint:
+      tags: quality
+      run: npm run lint
+    format:
+      tags: quality
+      run: npm run prettier
+    test:
+      run: forge test
+    build:
+      run: forge build
+# @DEV: Use `CI=true` env variable if you want to bypass
+# the execution of the installed hooks
