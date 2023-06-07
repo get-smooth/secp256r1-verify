@@ -19,3 +19,6 @@ broadcast/*/31337/
 # code editor config
 .vscode
 .editorconfig
+
+# forge
+remappings.txt
