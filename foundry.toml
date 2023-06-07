@@ -16,6 +16,8 @@
   solc = "0.8.19"
   src = "src"
   test = "test"
+  fs_permissions = [{ access = "read", path = "./test/wychproof/vec_valid.json" }]
+  ffi = true
 
 [profile.ci]
   fuzz = { runs = 10_000 }
