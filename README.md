@@ -155,7 +155,7 @@ $ forge test --gas-report
 Lint the contracts:
 
 ```sh
-$ npm run lint
+$ npm run quality
 ```
 
 ### Test

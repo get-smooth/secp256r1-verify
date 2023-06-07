@@ -37,9 +37,13 @@
   ],
   "scripts": {
     "clean": "rm -rf cache out",
-    "lint": "npm run lint:sol && npm run prettier:check",
-    "lint:sol": "forge fmt --check && solhint \"{script,src,test}/**/*.sol\"",
+    "lint": "forge fmt --check && solhint \"{script,src,test}/**/*.sol\"",
+    "lint:write": "forge fmt && solhint \"{script,src,test}/**/*.sol\" --fix",
     "prettier:check": "prettier --check \"**/*.{json,md,yml}\"",
-    "prettier:write": "prettier --write \"**/*.{json,md,yml}\""
+    "prettier:write": "prettier --write \"**/*.{json,md,yml}\"",
+    "quality": "npm run lint && npm run prettier",
+    "hooks": "lefthook run pre-push",
+    "hooks:install": "lefthook install",
+    "hooks:uninstall": "lefthook uninstall"
   }
 }
