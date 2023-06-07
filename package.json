@@ -1,10 +1,24 @@
 {
   "name": "@0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify",
   "description": "A solidity library to verify a secp256r1 signature",
-  "version": "1.0.0",
-  "author": {
-    "name": "0x90d2b2b7fb7599eebb6e7a32980857d8",
-    "url": "https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8"
+  "version": "0.0.1",
+  "contributors": [
+    {
+      "name": "qd-qd",
+      "email": "qdqdqdqdqd@protonmail.com",
+      "url": "https://github.com/qd-qd"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify.git"
+  },
+  "bugs": {
+    "url": "https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/issues"
+  },
+  "homepage": "https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify#readme",
+  "engines": {
+    "node": ">= 18"
   },
   "devDependencies": {
     "prettier": "^2.8.7",
@@ -13,13 +27,13 @@
   "keywords": [
     "blockchain",
     "ethereum",
-    "forge",
+    "evm",
     "foundry",
     "smart-contracts",
     "solidity",
-    "template"
+    "256r1",
+    "secp256r1"
   ],
-  "private": true,
   "scripts": {
     "clean": "rm -rf cache out",
     "lint": "npm run lint:sol && npm run prettier:check",
