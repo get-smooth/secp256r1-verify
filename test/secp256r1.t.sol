@@ -153,15 +153,19 @@ contract EcdsaTest is Test {
         message = vm.parseJsonUint(deployData, string.concat(".msg_", snum));
     }
 
-    function precompute_shamir_table(uint256 C0, uint256 C1) private returns (bytes memory precompute) {
-        vm.setEnv("C0", vm.toString(C0));
-        vm.setEnv("C1", vm.toString(C1));
-
-        // Precompute a 8 dimensional table for Shamir's trick from C0 and C1
+    /// @notice precumpute a shamir table of 256 points for a given pubKey
+    /// @dev this function execute a JS package listed in the package.json file
+    /// @param c0 the x coordinate of the public key
+    /// @param c1 the y coordinate of the public key
+    /// @return precompute the precomputed table as a bytes
+    function precompute_shamir_table(uint256 c0, uint256 c1) private returns (bytes memory precompute) {
+        // Precompute a 8 dimensional table for Shamir's trick from c0 and c1
         // and return the table as a bytes
-        string[] memory inputs = new string[](2);
-        inputs[0] = "sage";
-        inputs[1] = "test/shamir-precomputation.sage";
+        string[] memory inputs = new string[](4);
+        inputs[0] = "npx";
+        inputs[1] = "@0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation";
+        inputs[2] = vm.toString(c0);
+        inputs[3] = vm.toString(c1);
         precompute = vm.ffi(inputs);
     }
 
