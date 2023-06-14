@@ -2,11 +2,10 @@
 pragma solidity ^0.8.19;
 
 import { Test } from "../lib/forge-std/src/Test.sol";
-import { Secp256r1 } from "../src/secp256r1.sol";
+import { ECDSA, p, a, b, gx, gy, n, MINUS_2, MINUS_2MODN, MINUS_1 } from "../src/utils/ECDSA.sol";
 
 /**
  * TODO:
- *         - [ ] Check the coverage (analyse branches etc...)
  *         - [ ] Clean the tests
  *         - [ ] Create tests for the base library
  *         - [ ] Create tests for the variant libraries
@@ -26,9 +25,6 @@ function ecZZ_Dbl(
     pure
     returns (uint256 P0, uint256 P1, uint256 P2, uint256 P3)
 {
-    uint256 p = Secp256r1.p;
-    uint256 MINUS_2 = Secp256r1.MINUS_2;
-
     unchecked {
         assembly {
             // U=2*Y1
@@ -68,7 +64,7 @@ function ecZZ_Dbl(
 
 contract Secp256r1Standard {
     function verify(bytes32 message, uint256[2] calldata rs, uint256[2] calldata Q) external returns (bool) {
-        return Secp256r1.verify(message, rs, Q);
+        return ECDSA.verify(message, rs, Q);
     }
 }
 
@@ -91,13 +87,13 @@ contract Secp256r1Precompute is Test {
     }
 
     function verify(bytes32 message, uint256[2] calldata rs, address Shamir8) external returns (bool) {
-        return Secp256r1.verify(bytes32(message), rs, Shamir8);
+        return ECDSA.verify(bytes32(message), rs, Shamir8);
     }
 }
 
 contract Secp256r1Interleaved {
     function verify(uint256 scalar_u, uint256 scalar_v, uint256 scalar_r, address Shamir8) external returns (bool) {
-        return Secp256r1.verify(scalar_u, scalar_v, scalar_r, Shamir8);
+        return ECDSA.verify(scalar_u, scalar_v, scalar_r, Shamir8);
     }
 }
 
@@ -154,20 +150,20 @@ contract EcdsaTest is Test {
     function test_Invariant_edge() public {
         // choose Q=2P, then verify duplication is ok
         uint256[4] memory Q;
-        (Q[0], Q[1], Q[2], Q[3]) = ecZZ_Dbl(Secp256r1.gx, Secp256r1.gy, 1, 1);
+        (Q[0], Q[1], Q[2], Q[3]) = ecZZ_Dbl(gx, gy, 1, 1);
 
         uint256[4] memory _4P;
         (_4P[0], _4P[1], _4P[2], _4P[3]) = ecZZ_Dbl(Q[0], Q[1], Q[2], Q[3]);
 
         uint256 _4P_res1;
-        (_4P_res1,) = Secp256r1.ecZZ_SetAff(_4P[0], _4P[1], _4P[2], _4P[3]);
+        (_4P_res1,) = ECDSA.ecZZ_SetAff(_4P[0], _4P[1], _4P[2], _4P[3]);
 
-        uint256 _4P_res2 = Secp256r1.ecZZ_mulmuladd_S_asm(Secp256r1.gx, Secp256r1.gy, 4, 0);
+        uint256 _4P_res2 = ECDSA.ecZZ_mulmuladd_S_asm(gx, gy, 4, 0);
         assertEq(_4P_res1, _4P_res2);
 
         uint256[2] memory nQ;
-        (nQ[0], nQ[1]) = Secp256r1.ecZZ_SetAff(Q[0], Q[1], Q[2], Q[3]);
-        uint256 _4P_res3 = Secp256r1.ecZZ_mulmuladd_S_asm(nQ[0], nQ[1], 2, 1);
+        (nQ[0], nQ[1]) = ECDSA.ecZZ_SetAff(Q[0], Q[1], Q[2], Q[3]);
+        uint256 _4P_res3 = ECDSA.ecZZ_mulmuladd_S_asm(nQ[0], nQ[1], 2, 1);
 
         assertEq(_4P_res1, _4P_res3);
     }

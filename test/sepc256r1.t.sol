@@ -6,7 +6,7 @@ pragma solidity ^0.8.19;
  *         - [ ] Fix forge-std imports
  */
 import { Test } from "../lib/forge-std/src/Test.sol";
-import { Secp256r1 } from "../src/secp256r1.sol";
+import { nModInv, pModInv, p, a, b, gx, gy, n, MINUS_2, MINUS_2MODN, MINUS_1 } from "../src/utils/secp256r1.sol";
 
 /// @title `Secp256r1` test contract
 /// @notice Tests designed to only focus arithmetic functions of the `Secp256r1` library that are based on the curve
@@ -19,10 +19,10 @@ contract ArithmeticTest is Test {
     /// @param valueToInvert The value to invert.
     function test_Fuzz_InVmodn(uint256 valueToInvert) public {
         // bound the fuzzed value between 1 and n-1
-        valueToInvert = bound(valueToInvert, 1, Secp256r1.n - 1);
+        valueToInvert = bound(valueToInvert, 1, n - 1);
 
-        uint256 invertedValue = Secp256r1.nModInv(valueToInvert);
-        uint256 product = mulmod(invertedValue, valueToInvert, Secp256r1.n);
+        uint256 invertedValue = nModInv(valueToInvert);
+        uint256 product = mulmod(invertedValue, valueToInvert, n);
         assertEq(product, 1);
     }
 
@@ -34,10 +34,10 @@ contract ArithmeticTest is Test {
     /// @param valueToInvert The value to invert.
     function test_Fuzz_InVmodp(uint256 valueToInvert) public {
         // bound the fuzzed value between 1 and p-1
-        valueToInvert = bound(valueToInvert, 1, Secp256r1.p - 1);
+        valueToInvert = bound(valueToInvert, 1, p - 1);
 
-        uint256 invertedValue = Secp256r1.pModInv(valueToInvert);
-        uint256 product = mulmod(invertedValue, valueToInvert, Secp256r1.p);
+        uint256 invertedValue = pModInv(valueToInvert);
+        uint256 product = mulmod(invertedValue, valueToInvert, p);
         assertEq(product, 1);
     }
 }
