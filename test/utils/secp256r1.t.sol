@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: APACHE-2.0
 pragma solidity ^0.8.19;
 
-/**
- * TODO:
- *         - [ ] Fix forge-std imports
- */
-import { Test } from "../lib/forge-std/src/Test.sol";
-import { nModInv, pModInv, p, a, b, gx, gy, n, MINUS_2, MINUS_2MODN, MINUS_1 } from "../src/utils/secp256r1.sol";
+import { PRBTest } from "../../lib/prb-test/src/PRBTest.sol";
+import { StdUtils } from "../../lib/forge-std/src/StdUtils.sol";
+import { nModInv, pModInv, p, a, n } from "../../src/utils/secp256r1.sol";
 
 /// @title `Secp256r1` test contract
 /// @notice Tests designed to only focus arithmetic functions of the `Secp256r1` library that are based on the curve
-contract ArithmeticTest is Test {
+contract Secp256r1Test is StdUtils, PRBTest {
     /**
      * @notice Fuzz test for the `nModInv` function of the `Secp256r1` library. Generates a random value to invert
      * between 1 and n-1, and verifies that the inverse is correct by checking that the product of the value and its
