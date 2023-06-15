@@ -2,7 +2,7 @@
 
 [profile.default]
 auto_detect_solc = false
-block_timestamp = 1_680_220_800                                  # March 31, 2023 at 00:00 GMT
+block_timestamp = 1_680_220_800 # March 31, 2023 at 00:00 GMT
 bytecode_hash = "none"
 cbor_metadata = false
 evm_version = "paris"
@@ -18,6 +18,11 @@ src = "src"
 test = "test"
 fs_permissions = [{ access = "read", path = "./test/fixtures" }]
 ffi = true
+remappings = [
+    "ds-test/=lib/forge-std/lib/ds-test/src/",
+    "forge-std/=lib/forge-std/src/",
+    "@prb-test/=lib/prb-test/src/",
+]
 
 [profile.ci]
 fuzz = { runs = 10_000 }
