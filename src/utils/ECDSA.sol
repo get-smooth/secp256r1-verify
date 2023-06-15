@@ -4,26 +4,30 @@ pragma solidity ^0.8.19;
 import "./secp256r1.sol" as Curve;
 import { p, a, b, gx, gy, n, MINUS_2, MINUS_2MODN, MINUS_1, MODEXP_PRECOMPILE } from "./secp256r1.sol";
 
-/*
- * TODO: JOHN
- *         - [ ] Better manage the pre-compile
- *         - [ ] Create variants (standard, precomput, interleave, memhack)
- *         - [ ] Clean the libraries
- *         - [ ] NatSpec everything
+/**
+ * @title ECDSA Library
+ * @notice Library for handling Elliptic Curve Digital Signature Algorithm (ECDSA) operations on a compatible curve
  */
-
 library ECDSA {
     using { Curve.pModInv, Curve.nModInv } for uint256;
 
     /**
-     * /* @dev Convert from XYZZ rep to affine rep
+     * @notice Convert from XYZZ coordinates to affine coordinates
+     *
+     *         Learn more about the XYZZ representation here:
+     *         https://hyperelliptic.org/EFD/g1p/auto-shortw-xyzz-3.html#addition-add-2008-s*
+     * @param x The X-coordinate of the point in XYZZ representation
+     * @param y The Y-coordinate of the point in XYZZ representation
+     * @param zz The ZZ value of the point in XYZZ representation
+     * @param zzz The ZZZ value of the point in XYZZ representation
+     * @return x1 The X-coordinate of the point in affine representation
+     * @return y1 The Y-coordinate of the point in affine representation
      */
-    /*    https://hyperelliptic.org/EFD/g1p/auto-shortw-xyzz-3.html#addition-add-2008-s*/
-    function ecZZ_SetAff(uint256 x, uint256 y, uint256 zz, uint256 zzz) internal returns (uint256 x1, uint256 y1) {
+    function zz2Aff(uint256 x, uint256 y, uint256 zz, uint256 zzz) internal returns (uint256 x1, uint256 y1) {
         // 1/zzz
         uint256 zzzInv = zzz.pModInv();
 
-        // Y/zzz
+        // Y/zzz -- OUTPUT
         y1 = mulmod(y, zzzInv, p);
 
         // 1/z
@@ -32,15 +36,24 @@ library ECDSA {
         // 1/zz
         zzzInv = mulmod(_b, _b, p);
 
-        // X/zz
+        // X/zz -- OUTPUT
         x1 = mulmod(x, zzzInv, p);
     }
 
     /**
-     * @dev Sutherland2008 add a ZZ point with a normalized point and greedy formulae
-     * warning: assume that P1(x1,y1)!=P2(x2,y2), true in multiplication loop with prime order (cofactor 1)
+     * @notice Adds a point in XYZZ coordinates to a point in affine coordinates
+     * @param x1 The X-coordinate of the first point
+     * @param y1 The Y-coordinate of the first point
+     * @param zz1 The ZZ value of the first point
+     * @param zzz1 The ZZZ value of the first point
+     * @param x2 The X-coordinate of the second point
+     * @param y2 The Y-coordinate of the second point
+     * @return P0 The X-coordinate of the resulting point
+     * @return P1 The Y-coordinate of the resulting point
+     * @return P2 The ZZ value of the resulting point
+     * @return P3 The ZZZ value of the resulting point
      */
-    function ecZZ_AddN(
+    function zzAddN(
         uint256 x1,
         uint256 y1,
         uint256 zz1,
@@ -56,7 +69,7 @@ library ECDSA {
             return (x2, y2, 1, 1);
         }
 
-        assembly {
+        assembly ("memory-safe") {
             y1 := sub(p, y1)
             y2 := addmod(mulmod(y2, zzz1, p), y1, p)
             x2 := addmod(mulmod(x2, zz1, p), sub(p, x1), p)
@@ -87,9 +100,67 @@ library ECDSA {
     }
 
     /**
-     * @dev Check if a point in affine coordinates is on the curve (reject Neutral that is indeed on the curve).
+     * @notice Performs point doubling operation in XYZZ coordinates on an elliptic curve
+     * @dev This implements the "dbl-2008-s-1" doubling formulas from Sutherland's 2008 paper
+     * @param x The X-coordinate of the point
+     * @param y The Y-coordinate of the point
+     * @param zz The ZZ value of the point
+     * @param zzz The ZZZ value of the point
+     * @return P0 The X-coordinate of the resulting point after doubling
+     * @return P1 The Y-coordinate of the resulting point after doubling
+     * @return P2 The ZZ value of the resulting point after doubling
+     * @return P3 The ZZZ value of the resulting point after doubling
      */
-    function ecAff_isOnCurve(uint256 x, uint256 y) internal pure returns (bool) {
+    function zzDouble(
+        uint256 x,
+        uint256 y,
+        uint256 zz,
+        uint256 zzz
+    )
+        internal
+        pure
+        returns (uint256 P0, uint256 P1, uint256 P2, uint256 P3)
+    {
+        assembly ("memory-safe") {
+            // U=2*Y1
+            P0 := mulmod(2, y, p)
+
+            // V=U^2
+            P2 := mulmod(P0, P0, p)
+
+            // S = X1*V
+            P3 := mulmod(x, P2, p)
+
+            // W=UV
+            P1 := mulmod(P0, P2, p)
+
+            // zz3=V*ZZ1 -- OUTPUT
+            P2 := mulmod(P2, zz, p)
+
+            // M=3*(X1-ZZ1)*(X1+ZZ1)
+            zz := mulmod(3, mulmod(addmod(x, sub(p, zz), p), addmod(x, zz, p), p), p)
+
+            // X3=M^2-2S -- OUTPUT
+            P0 := addmod(mulmod(zz, zz, p), mulmod(MINUS_2, P3, p), p)
+
+            // M(S-X3)
+            x := mulmod(zz, addmod(P3, sub(p, P0), p), p)
+
+            // zzz3=W*zzz1 -- OUTPUT
+            P3 := mulmod(P1, zzz, p)
+
+            // Y3= M(S-X3)-W*Y1 -- OUTPUT
+            P1 := addmod(x, sub(p, mulmod(P1, y, p)), p)
+        }
+    }
+
+    /**
+     * @notice Check if a point in affine coordinates is on the curve
+     * @param x The X-coordinate of the point
+     * @param y The Y-coordinate of the point
+     * @return bool True if the point is on the curve, false otherwise
+     */
+    function affIsOnCurve(uint256 x, uint256 y) internal pure returns (bool) {
         if (0 == x || x == p || 0 == y || y == p) {
             return false;
         }
@@ -109,718 +180,24 @@ library ECDSA {
     }
 
     /**
-     * @dev Add two elliptic curve points in affine coordinates.
+     * @notice Add two points on the elliptic curve in affine coordinates
+     * @param x0 The X-coordinate of the first point
+     * @param y0 The Y-coordinate of the first point
+     * @param x1 The X-coordinate of the second point
+     * @param y1 The Y-coordinate of the second point
+     * @return x2 The X-coordinate of the resulting point
+     * @return y2 The Y-coordinate of the resulting point
      */
-    function ecAff_add(uint256 x0, uint256 y0, uint256 x1, uint256 y1) internal returns (uint256, uint256) {
+    function affAdd(uint256 x0, uint256 y0, uint256 x1, uint256 y1) internal returns (uint256 x2, uint256 y2) {
         // check if the curve is the zero curve in affine rep
-        if (y0 == 0) return (x1, y1);
-        if (y1 == 0) return (x1, y1);
+        if (y0 == 0 || y1 == 0) {
+            (x2, y2) = (x1, y1);
+        } else {
+            uint256 zz0;
+            uint256 zzz0;
 
-        uint256 zz0;
-        uint256 zzz0;
-        (x0, y0, zz0, zzz0) = ecZZ_AddN(x0, y0, 1, 1, x1, y1);
-
-        return ecZZ_SetAff(x0, y0, zz0, zzz0);
-    }
-
-    // TODO: CUT HERE
-
-    /**
-     * @dev Computation of uG+vQ using Strauss-Shamir's trick, G basepoint, Q public key
-     */
-    // uint256 Q1, //affine rep for input point Q
-    function ecZZ_mulmuladd_S_asm(
-        uint256 Q0,
-        uint256 Q1, //affine rep for input point Q
-        uint256 scalar_u,
-        uint256 scalar_v
-    )
-        internal
-        returns (uint256 X)
-    {
-        uint256 zz;
-        uint256 zzz;
-        uint256 Y;
-        uint256 index = 255;
-        uint256[6] memory T;
-        uint256 H0;
-        uint256 H1;
-
-        unchecked {
-            if (scalar_u == 0 && scalar_v == 0) return 0;
-
-            // will not work if Q=P, obvious forbidden private key
-            (H0, H1) = ecAff_add(gx, gy, Q0, Q1);
-
-            assembly {
-                for { let T4 := add(shl(1, and(shr(index, scalar_v), 1)), and(shr(index, scalar_u), 1)) } eq(T4, 0) {
-                    index := sub(index, 1)
-                    T4 := add(shl(1, and(shr(index, scalar_v), 1)), and(shr(index, scalar_u), 1))
-                } { }
-                zz := add(shl(1, and(shr(index, scalar_v), 1)), and(shr(index, scalar_u), 1))
-
-                if eq(zz, 1) {
-                    X := gx
-                    Y := gy
-                }
-                if eq(zz, 2) {
-                    X := Q0
-                    Y := Q1
-                }
-                if eq(zz, 3) {
-                    X := H0
-                    Y := H1
-                }
-
-                index := sub(index, 1)
-                zz := 1
-                zzz := 1
-
-                // inlined EcZZ_Dbl
-                for { } gt(MINUS_1, index) { index := sub(index, 1) } {
-                    // U = 2*Y1, y free
-                    let T1 := mulmod(2, Y, p)
-                    // V=U^2
-                    let T2 := mulmod(T1, T1, p)
-                    // S = X1*V
-                    let T3 := mulmod(X, T2, p)
-                    // W=UV
-                    T1 := mulmod(T1, T2, p)
-                    // M=3*(X1-ZZ1)*(X1+ZZ1)
-                    let T4 := mulmod(3, mulmod(addmod(X, sub(p, zz), p), addmod(X, zz, p), p), p)
-                    // zzz3=W*zzz1
-                    zzz := mulmod(T1, zzz, p)
-                    // zz3=V*ZZ1, V free
-                    zz := mulmod(T2, zz, p)
-                    //X3=M^2-2S
-                    X := addmod(mulmod(T4, T4, p), mulmod(MINUS_2, T3, p), p)
-                    // -M(S-X3)=M(X3-S)
-                    T2 := mulmod(T4, addmod(X, sub(p, T3), p), p)
-                    // -Y3= W*Y1-M(S-X3), we replace Y by -Y to avoid a sub in ecAdd
-                    Y := addmod(mulmod(T1, Y, p), T2, p)
-
-                    {
-                        //value of dibit
-                        T4 := add(shl(1, and(shr(index, scalar_v), 1)), and(shr(index, scalar_u), 1))
-
-                        // loop until T4 != 0
-                        if iszero(T4) {
-                            //restore the -Y inversion
-                            Y := sub(p, Y)
-                            continue
-                        }
-
-                        if eq(T4, 1) {
-                            T1 := gx
-                            T2 := gy
-                        }
-                        if eq(T4, 2) {
-                            T1 := Q0
-                            T2 := Q1
-                        }
-                        if eq(T4, 3) {
-                            T1 := H0
-                            T2 := H1
-                        }
-                        if eq(zz, 0) {
-                            X := T1
-                            Y := T2
-                            zz := 1
-                            zzz := 1
-                            continue
-                        }
-                        // inlined EcZZ_AddN
-                        // R
-                        let y2 := addmod(mulmod(T2, zzz, p), Y, p)
-                        // P
-                        T2 := addmod(mulmod(T1, zz, p), sub(p, X), p)
-
-                        // special extremely rare case accumulator where EcAdd is replaced by EcDbl, no optimize needed
-                        // TODO: construct edge vector case
-                        if eq(y2, 0) {
-                            if eq(T2, 0) {
-                                // U = 2*Y1, y free
-                                T1 := mulmod(MINUS_2, Y, p)
-                                // V=U^2
-                                T2 := mulmod(T1, T1, p)
-                                // S = X1*V
-                                T3 := mulmod(X, T2, p)
-
-                                // W=UV
-                                let TT1 := mulmod(T1, T2, p)
-                                y2 := addmod(X, zz, p)
-                                TT1 := addmod(X, sub(p, zz), p)
-                                // X-ZZ)(X+ZZ)
-                                y2 := mulmod(y2, TT1, p)
-                                // M
-                                T4 := mulmod(3, y2, p)
-
-                                // zzz3=W*zzz1
-                                zzz := mulmod(TT1, zzz, p)
-                                // zz3=V*ZZ1, V free
-                                zz := mulmod(T2, zz, p)
-
-                                // X3=M^2-2S
-                                X := addmod(mulmod(T4, T4, p), mulmod(MINUS_2, T3, p), p)
-                                // M(S-X3)
-                                T2 := mulmod(T4, addmod(T3, sub(p, X), p), p)
-                                // Y3=M(S-X3)-W*Y1
-                                Y := addmod(T2, mulmod(T1, Y, p), p)
-
-                                continue
-                            }
-                        }
-
-                        // PP
-                        T4 := mulmod(T2, T2, p)
-                        // PPP, this one could be spared, but adding this register spare gas
-                        let TT1 := mulmod(T4, T2, p)
-                        zz := mulmod(zz, T4, p)
-                        // zz3=V*ZZ1
-                        zzz := mulmod(zzz, TT1, p)
-                        let TT2 := mulmod(X, T4, p)
-                        T4 := addmod(addmod(mulmod(y2, y2, p), sub(p, TT1), p), mulmod(MINUS_2, TT2, p), p)
-                        Y := addmod(mulmod(addmod(TT2, sub(p, T4), p), y2, p), mulmod(Y, TT1, p), p)
-
-                        X := T4
-                    }
-                }
-
-                // TODO: JOHN -- Internal this one
-                // Define length of base, exponent and modulus. 0x20 == 32 bytes
-                mstore(add(T, 0x60), zz)
-                mstore(T, 0x20)
-                mstore(add(T, 0x20), 0x20)
-                // Define variables base, exponent and modulus
-                mstore(add(T, 0x40), 0x20)
-                mstore(add(T, 0x80), MINUS_2)
-                mstore(add(T, 0xa0), p)
-
-                // Call the precompiled contract ModExp (0x05)
-                if iszero(call(not(0), MODEXP_PRECOMPILE, 0, T, 0xc0, T, 0x20)) { revert(0, 0) }
-
-                // X/zz
-                X := mulmod(X, mload(T), p)
-            }
+            (x0, y0, zz0, zzz0) = zzAddN(x0, y0, 1, 1, x1, y1);
+            (x2, y2) = zz2Aff(x0, y0, zz0, zzz0);
         }
-
-        return X;
-    }
-
-    //8 dimensions Shamir's trick, using precomputations stored in Shamir8,  stored as Bytecode of an external
-    //contract at given address dataPointer
-    //(thx to Lakhdar https://github.com/Kelvyne for EVM storage explanations and tricks)
-    // the external tool to generate tables from public key is in the /sage directory
-    function ecZZ_mulmuladd_S8_extcode(
-        uint256 scalar_u,
-        uint256 scalar_v,
-        address dataPointer
-    )
-        internal
-        returns (uint256 X)
-    {
-        unchecked {
-            // third and  coordinates of the point
-            uint256 zz = 256;
-
-            uint256[6] memory T;
-
-            while (T[0] == 0) {
-                zz = zz - 1;
-                //TODO: TBD case of msb octobit is null
-                T[0] = 64
-                    * (
-                        128 * ((scalar_v >> zz) & 1) + 64 * ((scalar_v >> (zz - 64)) & 1)
-                            + 32 * ((scalar_v >> (zz - 128)) & 1) + 16 * ((scalar_v >> (zz - 192)) & 1)
-                            + 8 * ((scalar_u >> zz) & 1) + 4 * ((scalar_u >> (zz - 64)) & 1)
-                            + 2 * ((scalar_u >> (zz - 128)) & 1) + ((scalar_u >> (zz - 192)) & 1)
-                    );
-            }
-
-            assembly {
-                extcodecopy(dataPointer, T, mload(T), 64)
-                let index := sub(zz, 1)
-                X := mload(T)
-                let Y := mload(add(T, 32))
-                let zzz := 1
-                zz := 1
-
-                // loop over 1/4 of scalars thx to Shamir's trick over 8 points
-                for { } gt(index, 191) { index := add(index, 191) } {
-                    {
-                        // U = 2*Y1, y free
-                        let TT1 := mulmod(2, Y, p)
-                        // V=U^2
-                        let T2 := mulmod(TT1, TT1, p)
-                        // S = X1*V
-                        let T3 := mulmod(X, T2, p)
-                        // W=UV
-                        let T1 := mulmod(TT1, T2, p)
-                        // M=3*(X1-ZZ1)*(X1+ZZ1)
-                        let T4 := mulmod(3, mulmod(addmod(X, sub(p, zz), p), addmod(X, zz, p), p), p)
-                        // zzz3=W*zzz1
-                        zzz := mulmod(T1, zzz, p)
-                        // zz3=V*ZZ1, V free
-                        zz := mulmod(T2, zz, p)
-
-                        // X3=M^2-2S
-                        X := addmod(mulmod(T4, T4, p), mulmod(MINUS_2, T3, p), p)
-
-                        // -M(S-X3)=M(X3-S)
-                        let T5 := mulmod(T4, addmod(X, sub(p, T3), p), p)
-
-                        // -Y3= W*Y1-M(S-X3), we replace Y by -Y to avoid a sub in
-                        Y := addmod(mulmod(T1, Y, p), T5, p)
-                    }
-
-                    /* compute element to access in precomputed table */
-                    {
-                        let T4 := add(shl(13, and(shr(index, scalar_v), 1)), shl(9, and(shr(index, scalar_u), 1)))
-                        let index2 := sub(index, 64)
-                        let T3 :=
-                            add(T4, add(shl(12, and(shr(index2, scalar_v), 1)), shl(8, and(shr(index2, scalar_u), 1))))
-                        let index3 := sub(index2, 64)
-                        let T2 :=
-                            add(T3, add(shl(11, and(shr(index3, scalar_v), 1)), shl(7, and(shr(index3, scalar_u), 1))))
-                        index := sub(index3, 64)
-                        let T1 :=
-                            add(T2, add(shl(10, and(shr(index, scalar_v), 1)), shl(6, and(shr(index, scalar_u), 1))))
-
-                        //TODO: TBD check validity of formulae with (0,1) to remove conditional jump
-                        if iszero(T1) {
-                            Y := sub(p, Y)
-
-                            continue
-                        }
-                        extcodecopy(dataPointer, T, T1, 64)
-                    }
-
-                    /* Access to precomputed table using extcodecopy hack */
-                    {
-                        if iszero(zz) {
-                            X := mload(T)
-                            Y := mload(add(T, 32))
-                            zz := 1
-                            zzz := 1
-
-                            continue
-                        }
-
-                        let y2 := addmod(mulmod(mload(add(T, 32)), zzz, p), Y, p)
-                        let T2 := addmod(mulmod(mload(T), zz, p), sub(p, X), p)
-
-                        // special case ecAdd(P,P)=EcDbl
-                        if eq(y2, 0) {
-                            if eq(T2, 0) {
-                                // U = 2*Y1, y free
-                                let T1 := mulmod(MINUS_2, Y, p)
-                                // V=U^2
-                                T2 := mulmod(T1, T1, p)
-                                // S = X1*V
-                                let T3 := mulmod(X, T2, p)
-                                // W=UV
-                                let TT1 := mulmod(T1, T2, p)
-                                y2 := addmod(X, zz, p)
-                                TT1 := addmod(X, sub(p, zz), p)
-                                //(X-ZZ)(X+ZZ)
-                                y2 := mulmod(y2, TT1, p)
-                                // M
-                                let T4 := mulmod(3, y2, p)
-                                // zzz3=W*zzz1
-                                zzz := mulmod(TT1, zzz, p)
-                                // zz3=V*ZZ1, V free
-                                zz := mulmod(T2, zz, p)
-                                // X3=M^2-2S
-                                X := addmod(mulmod(T4, T4, p), mulmod(MINUS_2, T3, p), p)
-                                // M(S-X3)
-                                T2 := mulmod(T4, addmod(T3, sub(p, X), p), p)
-                                // Y3= M(S-X3)-W*Y1
-                                Y := addmod(T2, mulmod(T1, Y, p), p)
-
-                                continue
-                            }
-                        }
-
-                        let T4 := mulmod(T2, T2, p)
-                        let T1 := mulmod(T4, T2, p)
-                        zz := mulmod(zz, T4, p)
-                        // W=UV
-                        zzz := mulmod(zzz, T1, p)
-                        let zz1 := mulmod(X, T4, p)
-                        X := addmod(addmod(mulmod(y2, y2, p), sub(p, T1), p), mulmod(MINUS_2, zz1, p), p)
-                        Y := addmod(mulmod(addmod(zz1, sub(p, X), p), y2, p), mulmod(Y, T1, p), p)
-                    }
-                }
-                // Define length of base, exponent and modulus. 0x20 == 32 bytes
-                mstore(add(T, 0x60), zz)
-                mstore(T, 0x20)
-                mstore(add(T, 0x20), 0x20)
-                // Define variables base, exponent and modulus
-                mstore(add(T, 0x40), 0x20)
-                mstore(add(T, 0x80), MINUS_2)
-                mstore(add(T, 0xa0), p)
-
-                // Call the precompiled contract ModExp (0x05)
-                if iszero(call(not(0), MODEXP_PRECOMPILE, 0, T, 0xc0, T, 0x20)) { revert(0, 0) }
-
-                zz := mload(T)
-                // X/zz
-                X := mulmod(X, zz, p)
-            }
-        }
-    }
-
-    // Taking scalars directly interleaved to avoid to perform it in contract
-    function ecZZ_mulmuladd_interleaved(
-        uint256 scalar_high,
-        uint256 scalar_low,
-        address dataPointer
-    )
-        internal
-        returns (uint256 X)
-    {
-        uint256 zz = 248;
-        uint256[6] memory T;
-
-        unchecked {
-            // third and coordinates of the point
-            if ((scalar_high & scalar_low) == 0) {
-                return 0;
-            }
-
-            while (((scalar_high >> zz) & 0xff) == 0) {
-                zz -= 8;
-                if (zz == 0) {
-                    // first test prevent infinite loop on (0,0) input
-                    scalar_high = scalar_low;
-                    zz = 248;
-                }
-            }
-
-            T[0] = scalar_high >> zz;
-            zz -= 8;
-
-            if (zz == 0) {
-                // first test prevent infinite loop on (0,0) input
-                scalar_high = scalar_low;
-                zz = 248;
-            }
-        }
-        assembly {
-            extcodecopy(dataPointer, T, mload(T), 64)
-            let index := zz
-            X := mload(T)
-            let Y := mload(add(T, 32))
-            let zzz := 1
-            zz := 1
-            let highdone := 0
-
-            // loop over 1/4 of scalars thx to Shamir's trick over 8 points
-            for { } gt(index, 0) { index := sub(index, 8) } {
-                // inline Double
-                {
-                    // U = 2*Y1, y free
-                    let TT1 := mulmod(2, Y, p)
-                    // V=U^2
-                    let T2 := mulmod(TT1, TT1, p)
-                    // S = X1*V
-                    let T3 := mulmod(X, T2, p)
-                    // W=UV
-                    let T1 := mulmod(TT1, T2, p)
-                    // M=3*(X1-ZZ1)*(X1+ZZ1)
-                    let T4 := mulmod(3, mulmod(addmod(X, sub(p, zz), p), addmod(X, zz, p), p), p)
-                    // zzz3=W*zzz1
-                    zzz := mulmod(T1, zzz, p)
-                    // zz3=V*ZZ1, V free
-                    zz := mulmod(T2, zz, p)
-
-                    // X3=M^2-2S
-                    X := addmod(mulmod(T4, T4, p), mulmod(MINUS_2, T3, p), p)
-                    // -M(S-X3)=M(X3-S)
-                    let T5 := mulmod(T4, addmod(X, sub(p, T3), p), p)
-
-                    //-Y3= W*Y1-M(S-X3), we replace Y by -Y to avoid a sub inecAdd
-                    Y := addmod(mulmod(T1, Y, p), T5, p)
-                }
-                /* compute element to access in precomputed table */
-                {
-                    let T1 := and(shr(index, scalar_high), 0xff)
-                    // TODO: TBD check validity of formulae with (0,1) to remove conditional jump
-                    if iszero(T1) {
-                        Y := sub(p, Y)
-
-                        continue
-                    }
-                    extcodecopy(dataPointer, T, T1, 64)
-                    if eq(8, index) {
-                        if iszero(highdone) {
-                            highdone := 1
-                            scalar_high := scalar_low
-                            index := 248
-                        }
-                    }
-                }
-
-                /* Access to precomputed table using extcodecopy hack */
-                {
-                    // inlined EcZZ_AddN
-                    if iszero(zz) {
-                        X := mload(T)
-                        Y := mload(add(T, 32))
-                        zz := 1
-                        zzz := 1
-
-                        continue
-                    }
-
-                    let y2 := addmod(mulmod(mload(add(T, 32)), zzz, p), Y, p)
-                    let T2 := addmod(mulmod(mload(T), zz, p), sub(p, X), p)
-
-                    // special case ecAdd(P,P)=EcDbl
-                    if eq(y2, 0) {
-                        if eq(T2, 0) {
-                            // U = 2*Y1, y free
-                            let T1 := mulmod(MINUS_2, Y, p)
-                            // V=U^2
-                            T2 := mulmod(T1, T1, p)
-                            // S = X1*V
-                            let T3 := mulmod(X, T2, p)
-                            // W=UV
-                            let TT1 := mulmod(T1, T2, p)
-                            y2 := addmod(X, zz, p)
-                            TT1 := addmod(X, sub(p, zz), p)
-                            // (X-ZZ)(X+ZZ)
-                            y2 := mulmod(y2, TT1, p)
-                            // M
-                            let T4 := mulmod(3, y2, p)
-                            // zzz3=W*zzz1
-                            zzz := mulmod(TT1, zzz, p)
-                            // zz3=V*ZZ1, V free
-                            zz := mulmod(T2, zz, p)
-                            // X3=M^2-2S
-                            X := addmod(mulmod(T4, T4, p), mulmod(MINUS_2, T3, p), p)
-                            // M(S-X3)
-                            T2 := mulmod(T4, addmod(T3, sub(p, X), p), p)
-                            // Y3= M(S-X3)-W*Y1
-                            Y := addmod(T2, mulmod(T1, Y, p), p)
-
-                            continue
-                        }
-                    }
-
-                    let T4 := mulmod(T2, T2, p)
-                    let T1 := mulmod(T4, T2, p)
-                    zz := mulmod(zz, T4, p)
-                    // W=UV
-                    zzz := mulmod(zzz, T1, p)
-                    let zz1 := mulmod(X, T4, p)
-                    X := addmod(addmod(mulmod(y2, y2, p), sub(p, T1), p), mulmod(MINUS_2, zz1, p), p)
-                    Y := addmod(mulmod(addmod(zz1, sub(p, X), p), y2, p), mulmod(Y, T1, p), p)
-                }
-            }
-
-            // Define length of base, exponent and modulus. 0x20 == 32 bytes
-            mstore(add(T, 0x60), zz)
-            mstore(T, 0x20)
-            mstore(add(T, 0x20), 0x20)
-            // Define variables base, exponent and modulus
-            mstore(add(T, 0x40), 0x20)
-            mstore(add(T, 0x80), MINUS_2)
-            mstore(add(T, 0xa0), p)
-
-            // Call the precompiled contract ModExp (0x05)
-            if iszero(call(not(0), MODEXP_PRECOMPILE, 0, T, 0xc0, T, 0x20)) { revert(0, 0) }
-
-            zz := mload(T)
-            X := mulmod(X, zz, p)
-        }
-    }
-
-    // improving the extcodecopy trick : append array at end of contract
-    function ecZZ_mulmuladd_S8_hackmem(
-        uint256 scalar_u,
-        uint256 scalar_v,
-        uint256 dataPointer
-    )
-        internal
-        returns (uint256 X)
-    {
-        // third and  coordinates of the point
-        uint256 zz = 256;
-        uint256[6] memory T;
-
-        unchecked {
-            while (T[0] == 0) {
-                zz = zz - 1;
-                // TODO: TBD case of msb octobit is null
-                T[0] = 64
-                    * (
-                        128 * ((scalar_v >> zz) & 1) + 64 * ((scalar_v >> (zz - 64)) & 1)
-                            + 32 * ((scalar_v >> (zz - 128)) & 1) + 16 * ((scalar_v >> (zz - 192)) & 1)
-                            + 8 * ((scalar_u >> zz) & 1) + 4 * ((scalar_u >> (zz - 64)) & 1)
-                            + 2 * ((scalar_u >> (zz - 128)) & 1) + ((scalar_u >> (zz - 192)) & 1)
-                    );
-            }
-            assembly {
-                codecopy(T, add(mload(T), dataPointer), 64)
-                X := mload(T)
-                let Y := mload(add(T, 32))
-                let zzz := 1
-                zz := 1
-
-                // loop over 1/4 of scalars thx to Shamir's trick over 8 points
-                for { let index := 254 } gt(index, 191) { index := add(index, 191) } {
-                    // U = 2*Y1, y free
-                    let T1 := mulmod(2, Y, p)
-                    // V=U^2
-                    let T2 := mulmod(T1, T1, p)
-                    // S = X1*V
-                    let T3 := mulmod(X, T2, p)
-                    // W=UV
-                    T1 := mulmod(T1, T2, p)
-                    // M=3*(X1-ZZ1)*(X1+ZZ1)
-                    let T4 := mulmod(3, mulmod(addmod(X, sub(p, zz), p), addmod(X, zz, p), p), p)
-                    // zzz3=W*zzz1
-                    zzz := mulmod(T1, zzz, p)
-                    // zz3=V*ZZ1, V free
-                    zz := mulmod(T2, zz, p)
-                    // X3=M^2-2S
-                    X := addmod(mulmod(T4, T4, p), mulmod(MINUS_2, T3, p), p)
-                    // -M(S-X3)=M(X3-S)
-                    T2 := mulmod(T4, addmod(X, sub(p, T3), p), p)
-                    // -Y3= W*Y1-M(S-X3), we replace Y by -Y to avoid a sub in ecAdd
-                    Y := addmod(mulmod(T1, Y, p), T2, p)
-
-                    /* compute element to access in precomputed table */
-                    T4 := add(shl(13, and(shr(index, scalar_v), 1)), shl(9, and(shr(index, scalar_u), 1)))
-                    index := sub(index, 64)
-                    T4 := add(T4, add(shl(12, and(shr(index, scalar_v), 1)), shl(8, and(shr(index, scalar_u), 1))))
-                    index := sub(index, 64)
-                    T4 := add(T4, add(shl(11, and(shr(index, scalar_v), 1)), shl(7, and(shr(index, scalar_u), 1))))
-                    index := sub(index, 64)
-                    T4 := add(T4, add(shl(10, and(shr(index, scalar_v), 1)), shl(6, and(shr(index, scalar_u), 1))))
-
-                    // TODO: TBD check validity of formulae with (0,1) to remove conditional jump
-                    if iszero(T4) {
-                        Y := sub(p, Y)
-
-                        continue
-                    }
-                    /* Access to precomputed table using codecopy hack */
-                    {
-                        codecopy(T, add(T4, dataPointer), 64)
-
-                        // inlined EcZZ_AddN
-                        let y2 := addmod(mulmod(mload(add(T, 32)), zzz, p), Y, p)
-                        T2 := addmod(mulmod(mload(T), zz, p), sub(p, X), p)
-                        T4 := mulmod(T2, T2, p)
-                        T1 := mulmod(T4, T2, p)
-                        // W=UV
-                        T2 := mulmod(zz, T4, p)
-                        //zz3=V*ZZ1
-                        zzz := mulmod(zzz, T1, p)
-                        let zz1 := mulmod(X, T4, p)
-                        T4 := addmod(addmod(mulmod(y2, y2, p), sub(p, T1), p), mulmod(MINUS_2, zz1, p), p)
-                        Y := addmod(mulmod(addmod(zz1, sub(p, T4), p), y2, p), mulmod(Y, T1, p), p)
-                        zz := T2
-                        X := T4
-                    }
-                }
-
-                // Define length of base, exponent and modulus. 0x20 == 32 bytes
-                mstore(add(T, 0x60), zz)
-                mstore(T, 0x20)
-                mstore(add(T, 0x20), 0x20)
-                // Define variables base, exponent and modulus
-                mstore(add(T, 0x40), 0x20)
-                mstore(add(T, 0x80), MINUS_2)
-                mstore(add(T, 0xa0), p)
-
-                // Call the precompiled contract ModExp (0x05)
-                if iszero(call(not(0), MODEXP_PRECOMPILE, 0, T, 0xc0, T, 0x20)) { revert(0, 0) }
-
-                zz := mload(T)
-                // X/zz
-                X := mulmod(X, zz, p)
-            }
-        }
-    }
-
-    /**
-     * @dev ECDSA verification, given , signature, and public key.
-     */
-    function verify(bytes32 message, uint256[2] calldata rs, uint256[2] calldata Q) internal returns (bool) {
-        if (rs[0] == 0 || rs[0] >= n || rs[1] == 0 || rs[1] >= n) {
-            return false;
-        }
-
-        if (!ecAff_isOnCurve(Q[0], Q[1])) {
-            return false;
-        }
-
-        uint256 sInv = rs[1].nModInv();
-        uint256 scalar_u = mulmod(uint256(message), sInv, n);
-        uint256 scalar_v = mulmod(rs[0], sInv, n);
-        uint256 x1 = ecZZ_mulmuladd_S_asm(Q[0], Q[1], scalar_u, scalar_v);
-
-        assembly {
-            x1 := addmod(x1, sub(n, calldataload(rs)), n)
-        }
-
-        return x1 == 0;
-    }
-
-    /**
-     * @dev ECDSA verification using a precomputed table of multiples of P and Q stored in contract at address Shamir8
-     */
-    function verify(bytes32 message, uint256[2] calldata rs, address Shamir8) internal returns (bool) {
-        if (rs[0] == 0 || rs[0] >= n || rs[1] == 0 || rs[1] >= n) {
-            return false;
-        }
-
-        uint256 sInv = rs[1].nModInv();
-
-        // Shamir 8 dimensions
-        uint256 X = ecZZ_mulmuladd_S8_extcode(mulmod(uint256(message), sInv, n), mulmod(rs[0], sInv, n), Shamir8);
-
-        assembly {
-            X := addmod(X, sub(n, calldataload(rs)), n)
-        }
-
-        return X == 0;
-    }
-
-    // interleaved
-    function verify(uint256 scalar_u, uint256 scalar_v, uint256 scalar_r, address Shamir8) internal returns (bool) {
-        // Shamir 8 dimensions
-        uint256 X = ecZZ_mulmuladd_interleaved(scalar_u, scalar_v, Shamir8);
-
-        assembly {
-            X := addmod(X, sub(n, scalar_r), n)
-        }
-
-        return X == 0;
-    }
-
-    /**
-     * @dev ECDSA verification using a precomputed table of multiples of P and Q appended at end of contract at address
-     * endcontract
-     *     generation of contract bytecode for precomputations is done using sagemath code
-     *     (see sage directory, WebAuthn_precompute.sage)
-     */
-    function verify(bytes32 message, uint256[2] calldata rs, uint256 endcontract) internal returns (bool) {
-        if (rs[0] == 0 || rs[0] >= n || rs[1] == 0) {
-            return false;
-        }
-
-        uint256 sInv = rs[1].nModInv();
-        //Shamir 8 dimensions
-        uint256 X = ecZZ_mulmuladd_S8_hackmem(mulmod(uint256(message), sInv, n), mulmod(rs[0], sInv, n), endcontract);
-
-        assembly {
-            X := addmod(X, sub(n, calldataload(rs)), n)
-        }
-
-        return X == 0;
     }
 }
