@@ -1,6 +1,6 @@
 name: Quality checks
 
-# This CI workflow is responsible of running the linter and building the contracts.
+# This CI workflow is responsible of running the quality tools and building the contracts.
 
 on:
   workflow_dispatch:
@@ -12,6 +12,10 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+      repository-projects: read
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -26,10 +30,13 @@ jobs:
         with:
           node-version: lts/*
 
-      - name: Install the Node.js dependencies
-        run: npm install
+      - name: Authenticate with GitHub Packages
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
 
-      - name: Lint the contracts
+      - name: Install the Node.js dependencies
+        run: npm ci
+
+      - name: Run the linter and the formatter in check mode
         run: npm run quality
 
       - name: Add lint summary
