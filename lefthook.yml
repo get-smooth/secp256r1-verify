@@ -3,13 +3,13 @@ pre-push:
   commands:
     lint:
       tags: quality
-      run: npm run lint
+      run: make lint
     format:
       tags: quality
-      run: npm run prettier
+      run: make prettier
     test:
-      run: forge test
+      run: make test
     build:
-      run: forge build
+      run: make compile
 # @DEV: Use `CI=true` env variable if you want to bypass
 # the execution of the installed hooks
