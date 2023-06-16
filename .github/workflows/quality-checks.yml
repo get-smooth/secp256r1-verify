@@ -37,7 +37,7 @@ jobs:
         run: npm ci
 
       - name: Run the linter and the formatter in check mode
-        run: npm run quality
+        run: make quality
 
       - name: Add lint summary
         run: |
