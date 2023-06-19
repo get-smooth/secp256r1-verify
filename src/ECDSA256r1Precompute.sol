@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.19 <0.9.0;
 
-import { Curve, p, n, MINUS_2, MODEXP_PRECOMPILE } from "./utils/ECDSA.sol";
+import { Curve, p, n, MINUS_2 } from "./utils/ECDSA.sol";
 
 /// @title ECDSA256r1Precompute
 /// @notice This library is for ECDSA verification using a precomputed shamir table of 256 points. The Shamir's
@@ -21,7 +21,7 @@ import { Curve, p, n, MINUS_2, MODEXP_PRECOMPILE } from "./utils/ECDSA.sol";
 ///                 code is expressly optimized for curves with a=-3 and of prime order. Constants like -1, and -2
 ///                 should be replaced if this code is to be utilized for any curve other than sec256R1.
 library ECDSA256r1Precompute {
-    using { Curve.nModInv } for uint256;
+    using { Curve.nModInv, Curve.modExp } for uint256;
 
     /// @notice Executes Shamir's trick over 8 dimensions, using precomputations stored as bytecode of an external
     ///         contract at the given precomputedTable address
@@ -160,22 +160,9 @@ library ECDSA256r1Precompute {
                     Y := addmod(mulmod(addmod(zz1, sub(p, X), p), y2, p), mulmod(Y, T1, p), p)
                 }
             }
-            // Define length of base, exponent and modulus. 0x20 == 32 bytes
-            mstore(add(T, 0x60), zz)
-            mstore(T, 0x20)
-            mstore(add(T, 0x20), 0x20)
-            // Define variables base, exponent and modulus
-            mstore(add(T, 0x40), 0x20)
-            mstore(add(T, 0x80), MINUS_2)
-            mstore(add(T, 0xa0), p)
-
-            // Call the precompiled contract ModExp (0x05)
-            if iszero(call(not(0), MODEXP_PRECOMPILE, 0, T, 0xc0, T, 0x20)) { revert(0, 0) }
-
-            zz := mload(T)
-            // X/zz
-            X := mulmod(X, zz, p)
         }
+
+        return X.modExp(zz);
     }
 
     /// @notice Verifies an ECDSA signature using a precomputed table of multiples of P and Q stored in an external

@@ -119,3 +119,32 @@ function pModInv(uint256 self) returns (uint256 result) {
         result := mload(_result)
     }
 }
+
+function modExp(uint256 self, uint256 base) returns (uint256 result) {
+    assembly ("memory-safe") {
+        // load the free memory pointer
+        let ptr := mload(0x40)
+
+        // Define length of base (Bsize)
+        mstore(ptr, 0x20)
+        // Define the exponent size (Esize)
+        mstore(add(ptr, 0x20), 0x20)
+        // Define the modulus size (Msize)
+        mstore(add(ptr, 0x40), 0x20)
+        // Define variables base (B)
+        mstore(add(ptr, 0x60), base)
+        // Define the exponent (E)
+        mstore(add(ptr, 0x80), MINUS_2)
+        // We save the point of the last argument, it will be override by the result
+        // of the precompile call in order to avoid paying for the memory expansion properly
+        let _result := add(ptr, 0xa0)
+        // Define the modulus (M)
+        mstore(_result, p)
+
+        // Call the precompiled contract ModExp (0x05)
+        if iszero(call(not(0), MODEXP_PRECOMPILE, 0, ptr, 0xc0, _result, 0x20)) { revert(0, 0) }
+
+        // calculate mulmod of self and the result of the precompiled contract
+        result := mulmod(self, mload(_result), p)
+    }
+}

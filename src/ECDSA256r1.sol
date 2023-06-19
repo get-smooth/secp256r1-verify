@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.19 <0.9.0;
 
-import { ECDSA, Curve, p, gx, gy, n, MINUS_2, MINUS_1, MODEXP_PRECOMPILE } from "./utils/ECDSA.sol";
+import { ECDSA, Curve, p, gx, gy, n, MINUS_2, MINUS_1 } from "./utils/ECDSA.sol";
 
 /// @title ECDSA256r1
 /// @notice A library to verify ECDSA signatures made on the secp256r1 curve
@@ -12,7 +12,7 @@ import { ECDSA, Curve, p, gx, gy, n, MINUS_2, MINUS_1, MODEXP_PRECOMPILE } from 
 ///                 code is expressly optimized for curves with a=-3 and of prime order. Constants like -1, and -2
 ///                 should be replaced if this code is to be utilized for any curve other than sec256R1.
 library ECDSA256r1 {
-    using { Curve.nModInv } for uint256;
+    using { Curve.nModInv, Curve.modExp } for uint256;
 
     //// @notice Computes uG + vQ using Strauss-Shamir's trick on the secp256r1 elliptic curve, where G is the basepoint
     ///           and Q is the public key.
@@ -26,7 +26,6 @@ library ECDSA256r1 {
         uint256 zzz;
         uint256 Y;
         uint256 index = 255;
-        uint256[6] memory T;
         uint256 H0;
         uint256 H1;
 
@@ -167,26 +166,10 @@ library ECDSA256r1 {
                         X := T4
                     }
                 }
-
-                // TODO: JOHN -- Internal this one ?
-                // Define length of base, exponent and modulus. 0x20 == 32 bytes
-                mstore(add(T, 0x60), zz)
-                mstore(T, 0x20)
-                mstore(add(T, 0x20), 0x20)
-                // Define variables base, exponent and modulus
-                mstore(add(T, 0x40), 0x20)
-                mstore(add(T, 0x80), MINUS_2)
-                mstore(add(T, 0xa0), p)
-
-                // Call the precompiled contract ModExp (0x05)
-                if iszero(call(not(0), MODEXP_PRECOMPILE, 0, T, 0xc0, T, 0x20)) { revert(0, 0) }
-
-                // X/zz
-                X := mulmod(X, mload(T), p)
             }
         }
 
-        return X;
+        return X.modExp(zz);
     }
 
     /// @notice Verifies an ECDSA signature on the secp256r1 curve given the message, signature, and public key.
