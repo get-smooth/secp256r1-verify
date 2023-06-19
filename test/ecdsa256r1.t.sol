@@ -11,9 +11,20 @@ struct TestVectors {
     string fixtures;
 }
 
+contract ImplementationECDSA256r1 {
+    function verify(bytes32 message, uint256[2] memory rs, uint256[2] memory pubKey) external returns (bool) {
+        return ECDSA256r1.verify(message, rs, pubKey);
+    }
+
+    function mulmuladd(uint256 q0, uint256 q1, uint256 n0, uint256 n1) external returns (uint256) {
+        return ECDSA256r1.mulmuladd(q0, q1, n0, n1);
+    }
+}
+
 contract Ecdsa256r1Test is PRBTest {
     TestVectors private $validVectors;
     TestVectors private $invalidVectors;
+    ImplementationECDSA256r1 private implementation;
 
     string private constant VALID_VECTOR_FILE_PATH = "test/fixtures/vec_valid.json";
     string private constant INVALID_VECTOR_FILE_PATH = "test/fixtures/vec_invalid.json";
@@ -23,6 +34,9 @@ contract Ecdsa256r1Test is PRBTest {
         // load the test vectores from the provided JSON files
         $validVectors = _loadFixtures(true);
         $invalidVectors = _loadFixtures(false);
+
+        // deploy the implementation contract
+        implementation = new ImplementationECDSA256r1();
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -74,7 +88,7 @@ contract Ecdsa256r1Test is PRBTest {
             // get the test vector (message, signature)
             (uint256[2] memory rs, bytes32 message) = _getTestVector(testVectors.fixtures, vm.toString(i));
             // run the verification function with the test vector
-            bool isStandardValid = ECDSA256r1.verify(message, rs, testVectors.pubKey);
+            bool isStandardValid = implementation.verify(message, rs, testVectors.pubKey);
             // ensure the result is the expected one
             assertEq(isStandardValid, flag);
         }
@@ -94,18 +108,18 @@ contract Ecdsa256r1Test is PRBTest {
         uint256 _4P_res1;
         (_4P_res1,) = ECDSA.zz2Aff(_4P[0], _4P[1], _4P[2], _4P[3]);
 
-        uint256 _4P_res2 = ECDSA256r1.mulmuladd(gx, gy, 4, 0);
+        uint256 _4P_res2 = implementation.mulmuladd(gx, gy, 4, 0);
         assertEq(_4P_res1, _4P_res2);
 
         uint256[2] memory nQ;
         (nQ[0], nQ[1]) = ECDSA.zz2Aff(Q[0], Q[1], Q[2], Q[3]);
-        uint256 _4P_res3 = ECDSA256r1.mulmuladd(nQ[0], nQ[1], 2, 1);
+        uint256 _4P_res3 = implementation.mulmuladd(nQ[0], nQ[1], 2, 1);
 
         assertEq(_4P_res1, _4P_res3);
     }
 
     function test_MulMullAddMultipleBy0Fail(uint256 q0, uint256 q1) public {
-        uint256 res = ECDSA256r1.mulmuladd(q0, q1, 0, 0);
+        uint256 res = implementation.mulmuladd(q0, q1, 0, 0);
         assertEq(res, 0);
     }
 
@@ -122,43 +136,43 @@ contract Ecdsa256r1Test is PRBTest {
     // test invalid vectors, all assert shall be false
     function test_VerifySignatureValidity() public {
         // expect to fail because rs[0] == 0
-        bool isValid = ECDSA256r1.verify(bytes32("hello"), [uint256(0), uint256(1)], [uint256(1), uint256(1)]);
+        bool isValid = implementation.verify(bytes32("hello"), [uint256(0), uint256(1)], [uint256(1), uint256(1)]);
         assertFalse(isValid);
 
         // expect to fail because rs[1] == 0
-        isValid = ECDSA256r1.verify(bytes32("hello"), [uint256(1), uint256(0)], [uint256(1), uint256(1)]);
+        isValid = implementation.verify(bytes32("hello"), [uint256(1), uint256(0)], [uint256(1), uint256(1)]);
         assertFalse(isValid);
 
         // expect to fail because rs[0] > n
-        isValid = ECDSA256r1.verify(bytes32("hello"), [n + 1, uint256(1)], [uint256(1), uint256(1)]);
+        isValid = implementation.verify(bytes32("hello"), [n + 1, uint256(1)], [uint256(1), uint256(1)]);
         assertFalse(isValid);
 
         // expect to fail because rs[0] == n
-        isValid = ECDSA256r1.verify(bytes32("hello"), [n, uint256(1)], [uint256(1), uint256(1)]);
+        isValid = implementation.verify(bytes32("hello"), [n, uint256(1)], [uint256(1), uint256(1)]);
         assertFalse(isValid);
 
         // expect to fail because rs[1] > n
-        isValid = ECDSA256r1.verify(bytes32("hello"), [uint256(1), n + 1], [uint256(1), uint256(1)]);
+        isValid = implementation.verify(bytes32("hello"), [uint256(1), n + 1], [uint256(1), uint256(1)]);
         assertFalse(isValid);
 
         // expect to fail because rs[1] == n
-        isValid = ECDSA256r1.verify(bytes32("hello"), [uint256(1), n], [uint256(1), uint256(1)]);
+        isValid = implementation.verify(bytes32("hello"), [uint256(1), n], [uint256(1), uint256(1)]);
         assertFalse(isValid);
 
         // expect to fail because q[0] == 0 (affine coordinates not on the curve)
-        isValid = ECDSA256r1.verify(bytes32("hello"), [uint256(1), uint256(1)], [0, uint256(1)]);
+        isValid = implementation.verify(bytes32("hello"), [uint256(1), uint256(1)], [0, uint256(1)]);
         assertFalse(isValid);
 
         // expect to fail because q[1] == 0 (affine coordinates not on the curve)
-        isValid = ECDSA256r1.verify(bytes32("hello"), [uint256(1), uint256(1)], [uint256(1), 0]);
+        isValid = implementation.verify(bytes32("hello"), [uint256(1), uint256(1)], [uint256(1), 0]);
         assertFalse(isValid);
 
         // expect to fail because q[0] == p (affine coordinates not on the curve)
-        isValid = ECDSA256r1.verify(bytes32("hello"), [uint256(1), uint256(1)], [p, uint256(1)]);
+        isValid = implementation.verify(bytes32("hello"), [uint256(1), uint256(1)], [p, uint256(1)]);
         assertFalse(isValid);
 
         // expect to fail because q[1] == p (affine coordinates not on the curve)
-        isValid = ECDSA256r1.verify(bytes32("hello"), [uint256(1), uint256(1)], [uint256(1), p]);
+        isValid = implementation.verify(bytes32("hello"), [uint256(1), uint256(1)], [uint256(1), p]);
         assertFalse(isValid);
     }
 }
