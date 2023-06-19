@@ -6,7 +6,7 @@ pre-push:
       run: make lint
     format:
       tags: quality
-      run: make prettier
+      run: make format
     test:
       run: make test
     build:

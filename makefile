@@ -142,7 +142,7 @@ hooks-i: lefthok-install
 hooks-u: lefthok-uninstall
 lint: lint
 lint-fix: lint-fix
-prettier: prettier
-prettier-fix: prettier-fix
+format: prettier
+format-fix: prettier-fix
 quality: lint prettier
 install: install-dependencies lefthok-install
