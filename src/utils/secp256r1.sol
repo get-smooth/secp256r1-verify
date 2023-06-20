@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: APACHE-2.0
-pragma solidity ^0.8.19;
+pragma solidity >=0.8.19 <0.9.0;
 
 /*//////////////////////////////////////////////////////////////
                         CURVE PARAMETERS

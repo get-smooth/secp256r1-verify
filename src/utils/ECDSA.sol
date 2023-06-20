@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: APACHE-2.0
-pragma solidity ^0.8.19;
+pragma solidity >=0.8.19 <0.9.0;
 
 import "./secp256r1.sol" as Curve;
 import { p, a, b, gx, gy, n, MINUS_2, MINUS_2MODN, MINUS_1, MODEXP_PRECOMPILE } from "./secp256r1.sol";
