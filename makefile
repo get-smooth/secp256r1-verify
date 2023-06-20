@@ -50,6 +50,7 @@ default:
 		  \e[90m$$ \e[0;97;1mmake \e[0;92;1mprettier-fix          \e[0;90m➔ \e[32;3mrun the formatter in write mode \e[0m\n \
 		  \e[90m$$ \e[0;97;1mmake \e[0;92;1mquality               \e[0;90m➔ \e[32;3mrun both the linter and the formatter in read mode \e[0m\n \
 		  \e[90m$$ \e[0;97;1mmake \e[0;92;1mdoc                   \e[0;90m➔ \e[32;3mgenerate the documentation of the project \e[0m\n \
+		  \e[90m$$ \e[0;97;1mmake \e[0;92;1mtree                  \e[0;90m➔ \e[32;3mdisplay a tree visualization of the project's dependency graph \e[0m\n \
 	""" | sed -e 's/^[ \t	]\{1,\}\(.\)/  \1/'
 
 
@@ -87,6 +88,10 @@ clean:
 .PHONY: forge-doc
 forge-doc:
 	@runcmd forge doc && forge doc --build
+
+.PHONY: forge-tree
+forge-tree:
+	@runcmd forge tree --no-dedupe
 
 .PHONY: update-dependencies
 update-dependencies:
@@ -137,6 +142,7 @@ coverage: forge-coverage
 clean: forge-clean
 update: update-dependencies
 doc: forge-doc
+tree: forge-tree
 hooks: lefthok-run
 hooks-i: lefthok-install
 hooks-u: lefthok-uninstall
