@@ -129,10 +129,8 @@ library ECDSA256r1Precompute {
                             T2 := mulmod(T1, T1, p)
                             // S = X1*V
                             let T3 := mulmod(X, T2, p)
-                            // W=UV
-                            let TT1 := mulmod(T1, T2, p)
                             y2 := addmod(X, zz, p)
-                            TT1 := addmod(X, sub(p, zz), p)
+                            let TT1 := addmod(X, sub(p, zz), p)
                             //(X-ZZ)(X+ZZ)
                             y2 := mulmod(y2, TT1, p)
                             // M
