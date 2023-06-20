@@ -25,6 +25,9 @@ import { Curve, p, n, MINUS_2, MODEXP_PRECOMPILE } from "./utils/ECDSA.sol";
 ///         More info on the `extcodecopy` opcode: https://www.evm.codes/#3c
 ///         How to generate the precomputed table: github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation
 /// @custom:experimental This is an **untested** and experimental library!!!!!
+/// @custom:warning This code is NOT intended for use with non-prime order curves due to security considerations. The
+///                 code is expressly optimized for curves with a=-3 and of prime order. Constants like -1, and -2
+///                 should be replaced if this code is to be utilized for any curve other than sec256R1.
 library ECDSA256r1PrecomputeInternal {
     using { Curve.nModInv } for uint256;
 

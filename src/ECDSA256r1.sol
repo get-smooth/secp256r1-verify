@@ -8,6 +8,9 @@ import { ECDSA, Curve, p, gx, gy, n, MINUS_2, MINUS_1, MODEXP_PRECOMPILE } from 
 /// @dev This is the easiest library to deal with but also the most expensive in terms of gas cost. Indeed, this library
 ///      must calculate multiple points on the curve in order to verify the signature. Use it kmowingly.
 /// @custom:experimental This is an experimental library.
+/// @custom:warning This code is NOT intended for use with non-prime order curves due to security considerations. The
+///                 code is expressly optimized for curves with a=-3 and of prime order. Constants like -1, and -2
+///                 should be replaced if this code is to be utilized for any curve other than sec256R1.
 library ECDSA256r1 {
     using { Curve.nModInv } for uint256;
 
