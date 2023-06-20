@@ -8,6 +8,9 @@ on:
       - src/**
       - .github/workflows/deploy-doc.yml
       - foundry.toml
+      - README.md
+      - LICENSE.md
+      - CONTRIBUTING.md
 
 jobs:
   deploy-doc:
