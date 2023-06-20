@@ -5,7 +5,19 @@ name: Static analysis
 on:
   workflow_dispatch:
   pull_request:
+    paths:
+      - src/**
+      - .github/workflows/static-analysis.yml
+      - slither.config.json
+      - foundry.toml
+    branches:
+      - main
   push:
+    paths:
+      - src/**
+      - .github/workflows/static-analysis.yml
+      - slither.config.json
+      - foundry.toml
     branches:
       - main
 
