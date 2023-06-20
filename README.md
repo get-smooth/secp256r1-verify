@@ -2,6 +2,7 @@
 
 [![quality workflow](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/quality-checks.yml/badge.svg?branch=main)](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/quality-checks.yml)
 [![test workflow](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/tests.yml)
+[![release workflow](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/release-package.yml/badge.svg)](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/release-package.yml)
 [![documentation](https://img.shields.io/badge/documentation-here-purple)](https://0x90d2b2b7fb7599eebb6e7a32980857d8.github.io/secp256r1-verify/)
 
 ## Description
