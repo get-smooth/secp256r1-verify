@@ -85,7 +85,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="index.html">Home</a></li><li class="chapter-item affix "><li class="part-title">src</li><li class="chapter-item "><a href="src/utils/index.html">❱ utils</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="src/utils/ECDSA.sol/library.ECDSA.html">ECDSA</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/function.nModInv.html">nModInv</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/function.pModInv.html">pModInv</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/constants.secp256r1.html">secp256r1 constants</a></li></ol></li><li class="chapter-item "><a href="src/ECDSA256PrecomputeInternal.sol/library.ECDSA256r1PrecomputeInternal.html">ECDSA256r1PrecomputeInternal</a></li><li class="chapter-item "><a href="src/ECDSA256r1.sol/library.ECDSA256r1.html">ECDSA256r1</a></li><li class="chapter-item "><a href="src/ECDSA256r1Precompute.sol/library.ECDSA256r1Precompute.html">ECDSA256r1Precompute</a></li></ol>
+                <ol class="chapter"><li class="chapter-item "><a href="index.html">Home</a></li><li class="chapter-item affix "><li class="part-title">src</li><li class="chapter-item "><a href="src/utils/index.html">❱ utils</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="src/utils/ECDSA.sol/library.ECDSA.html">ECDSA</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/function.pModInv.html">pModInv</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/function.nModInv.html">nModInv</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/constants.secp256r1.html">secp256r1 constants</a></li></ol></li><li class="chapter-item "><a href="src/ECDSA256PrecomputeInternal.sol/library.ECDSA256r1PrecomputeInternal.html">ECDSA256r1PrecomputeInternal</a></li><li class="chapter-item "><a href="src/ECDSA256r1.sol/library.ECDSA256r1.html">ECDSA256r1</a></li><li class="chapter-item "><a href="src/ECDSA256r1Precompute.sol/library.ECDSA256r1Precompute.html">ECDSA256r1Precompute</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -149,24 +149,284 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="secp256r1-verify"><a class="header" href="#secp256r1-verify">secp256r1-verify</a></h1>
+                        <h1 id="secp256r1-verify"><a class="header" href="#secp256r1-verify">secp256r1 verify</a></h1>
 <p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/quality-checks.yml"><img src="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/quality-checks.yml/badge.svg?branch=main" alt="quality workflow" /></a>
 <a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/tests.yml"><img src="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/tests.yml/badge.svg?branch=main" alt="test workflow" /></a>
 <a href="https://0x90d2b2b7fb7599eebb6e7a32980857d8.github.io/secp256r1-verify/"><img src="https://img.shields.io/badge/documentation-here-purple" alt="documentation" /></a></p>
 <h2 id="description"><a class="header" href="#description">Description</a></h2>
-<p>A solidity library to verify a secp256r1 signature.</p>
+<p><code>secp256r1-verify</code> is a specialized Solidity library that enables on-chain ECDSA signature verification on the secp256r1
+curve with notable efficiency. This repository offers three distinct implementations for signature verification, each
+carrying its own set of advantages and trade-offs. It sets a vital foundation for the widespread application of FIDO2's
+webauthn, serving as an authentication protocol for smart-accounts.</p>
+<h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
+<h3 id="foundry"><a class="header" href="#foundry">Foundry</a></h3>
+<p>To install the <code>secp256r1-verify</code> package in a Foundry project, execute the following command:</p>
+<pre><code class="language-sh">forge install https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify
+</code></pre>
+<p>This command will install the latest version of the package in your lib directory. To install a specific version of the
+library, follow the instructions in the
+<a href="https://book.getfoundry.sh/reference/forge/forge-install?highlight=forge%20install#forge-install">official Foundry documentation</a>.</p>
+<h3 id="hardhat-or-truffle"><a class="header" href="#hardhat-or-truffle">Hardhat or Truffle</a></h3>
+<p>To install the <code>secp256r1-verify</code> package in a Hardhat or Truffle project, use <code>npm</code> to run the following command:</p>
+<pre><code class="language-sh">npm install @0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify
+</code></pre>
+<p>After the installation, import the package into your project and use it to generate precomputed points for the secp256r1
+elliptic curve.</p>
 <blockquote>
-<p>Documentation is coming</p>
+<p>⚠️ Note: This package is not published on the npm registry, and is only available on GitHub Packages. You need to be
+authenticated with GitHub Packages to install it. For more information, please refer to the
+<a href="index.html#setup-github-registry">troubleshooting section</a>. We are willing to deploy it on the npm registry if there is a need.
+Please open an issue if you would like to see this package on the npm registry.</p>
 </blockquote>
+<h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
+<p>This repository provides three unique signature verification implementations, each having its own benefits and
+drawbacks. After you've integrated this library into your project, you can freely import and use the implementation that
+best suits your specific use-case and requirements. Let's take a more detailed look at each one.</p>
+<blockquote>
+<p>🚨 None of the implementations have been audited. DO NOT USE THEM IN PRODUCTION.</p>
+</blockquote>
+<h3 id="1-the-traditional-implementation"><a class="header" href="#1-the-traditional-implementation">1️⃣ The traditional implementation</a></h3>
+<p>The traditional approach is the most direct out of the three and is found in the
+<a href="./src/ECDSA256r1.sol">ECDSA256r1 file</a>. This implementation is ready to use right out of the box; simply deploy the
+library and interact with it by calling its singular exposed function, <code>verify</code>, which accepts three parameters:</p>
+<ul>
+<li><code>bytes32 messageHash</code>: The hash of the message to verify</li>
+<li><code>uint256[2] calldata rs</code>: The r and s values of the ECDSA signature</li>
+<li><code>uint256[2] calldata point</code>: The public key point of the signer</li>
+</ul>
+<p>This approach computes <code>uG + vQ</code> using the Strauss-Shamir's trick on the secp256r1 elliptic curve <strong>on-chain</strong>, where G
+is the base point and Q is the public key. Though this is the least gas-efficient method, it's also the simplest to set
+up. Use this approach if you're not worried about verification process costs.</p>
+<h3 id="2-the-external-precomputed-points-implementation-recommended"><a class="header" href="#2-the-external-precomputed-points-implementation-recommended">2️⃣ The external precomputed points implementation (<strong>Recommended</strong>)</a></h3>
+<p>The external precomputed points approach is our most established solution, found in the
+<a href="./src/ECDSA256r1Precompute.sol">ECDSA256r1Precompute file</a>. Unlike the traditional approach, this requires precomputing
+a table of 256 points off-chain for each public key you wish to verify a message from.</p>
+<p>In order to mitigate the costly on-chain computation required in the traditional approach, we precompute a table of 256
+points for each public key we want to verify the message from. This table is computed off-chain and stored in a smart
+contract, which is then deployed on-chain and used by the <code>ECDSA256r1Precompute</code> library to verify the message.</p>
+<p>Instead of deploying a functional contract (a contract whose bytecode makes sense in the Ethereum Virtual Machine
+context), we only deploy the precomputed table. The EVM does not require the code pushed to be understood by the virtual
+machine. You can push bytecodes containing unsupported EVM opcodes. This means that the contract storing the precomputed
+table isn't a traditional contract; it's an immutable piece of on-chain data. Calling it will result in a revert as the
+instructions set into it don't make sense.</p>
+<p>We deploy the precomputed table this way because it allows us to use the highly gas-efficient
+<a href="https://www.evm.codes/#3c"><code>extcodecopy</code></a> opcode to read the table. This opcode is used to copy some segments of a
+contract's bytecode into memory. In our case, the contract's bytecode is the precomputed table, so we can read the table
+in a very gas-efficient way (compared to storing it in storage -- which would be costly in gas terms because it would
+necessitate using multiple expensive <a href="https://www.evm.codes/#54">SLOAD</a> opcodes).</p>
+<p>The <code>verify</code> function of this implementation takes 3 parameters:</p>
+<ul>
+<li><code>bytes32 messageHash</code>: The hash of the message to verify</li>
+<li><code>uint256[2] calldata rs</code>: The r and s values of the ECDSA signature</li>
+<li><code>address precomputedTable</code>: The address of the contract containing the precomputations</li>
+</ul>
+<p>This method significantly outperforms the traditional approach in gas terms, but it's also more challenging to implement
+as it requires off-chain point precomputations and on-chain storage before message verification. Furthermore, deployment
+gas costs must be factored in. It is recommended to use this approach if you are concerned about the cost of the
+verification process and your scenario involves multiple verifications from the same public key.</p>
+<blockquote>
+<p>🔜 Example scripts will soon be available to assist with off-chain point precomputations and on-chain precomputed
+table deployment. Meanwhile, if you want to precompute the points off-chain yourself, you can use the following
+<a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation">library</a> developed by us for this
+purpose.</p>
+</blockquote>
+<h3 id="3-the-internal-precomputed-points-implementation-work-in-progress"><a class="header" href="#3-the-internal-precomputed-points-implementation-work-in-progress">3️⃣ The internal precomputed points implementation (<strong>work in progress</strong>)</a></h3>
+<p>The internal precomputed points approach is our latest solution, still a work-in-progress and located in the
+<a href="./src/ECDSA256PrecomputeInternal.sol">ECDSA256r1PrecomputeInternal file</a>. Like the external precomputed points
+approach, you'll need to precompute a table of 256 points off-chain for each public key from which you wish to verify a
+message. The difference here is that the precomputed table is stored directly within the contract that uses the library,
+rather than being stored in a dedicated account. Let's examine how this works.</p>
+<p>Like the external precomputed points approach, this implementation sidesteps the expensive on-chain computation of the
+traditional approach. The process for generating precomputed points remains the same until we reach the point of
+on-chain precomputed table deployment. Instead of deploying the precomputed table on-chain, we store it directly within
+the contract that utilizes the library. One way to achieve this is to create a contract containing a constant of the
+same size as the precomputed tables (64*256 bytes are crucial), compile it once, and then whenever you need it replace
+the placeholder value of the constant with the precomputed points in the compiled contract's bytecode. In addition to
+replacing the placeholder value of the constant with the precomputed points, the script must calculate the constant's
+offset in the contract's bytecode. This offset is used to locate this constant in the contract's bytecode.</p>
+<p>Once this is accomplished and the contract is deployed on-chain, the same contract (functional this time because the
+precomputed points coexist with the contract's logic) can read the precomputed table from its own bytecode using the
+<a href="https://www.evm.codes/#39">codecopy</a> opcode. This opcode copies segments of the bytecode in the current environment
+into memory. In our case, the contract's bytecode contains the precomputed table, allowing us to read the precomputed
+table in a highly gas-efficient manner using the constant's offset in the contract's bytecode (calculated by the
+script).</p>
+<p>The <code>verify</code> function of this implementation takes 3 parameters:</p>
+<ul>
+<li><code>bytes32 message</code>: The hash of the message to verify</li>
+<li><code>uint256[2] calldata rs</code>: The r and s values of the ECDSA signature</li>
+<li><code>uint256 precomputedOffset</code>: The offset where the precomputed points starts in the bytecode</li>
+</ul>
+<p>The <code>codecopy</code> opcode is cheaper than <code>extcodecopy</code> because it doesn't need to perform a call to another contract; the
+account's code is already hot. <code>codecopy</code> is used in a way that only loads part of the precomputation into memory, as
+opposed to copying the entire table into memory before manipulation.</p>
+<p>However, this approach does come with significant trade-offs. While it could reduce gas consumption in a unique-signer
+scenario that can't be altered, it's not recommended for scenarios where the public key allowed for a contract may
+change. In addition, each contract includes its own precomputed points, in contrast to a scenario where precomputed
+points for a specific public key are stored once in a dedicated account and used by multiple contracts. This approach is
+definitely less composable and flexible than the external precomputed points approach. These factors should be weighed
+before considering this approach.</p>
+<blockquote>
+<p>🚨 As stated, this implementation is highly experimental. At this point, this implementation hasn't been tested. IT IS
+NOT RECOMMENDED FOR USE IN PRODUCTION.</p>
+</blockquote>
+<blockquote>
+<p>🔜 Example scripts will soon be available to assist with off-chain point precomputations and on-chain precomputed
+table deployment. Meanwhile, if you want to precompute the points off-chain yourself, you can use the following
+<a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation">library</a> developed by us for this
+purpose.</p>
+</blockquote>
+<h2 id="contributing"><a class="header" href="#contributing">Contributing</a></h2>
+<p>To contribute to the project, you must have Foundry and Node.js installed on your system. You can download them from
+their official websites:</p>
+<ul>
+<li>Node.js: https://nodejs.org/</li>
+<li>Foundry: https://book.getfoundry.sh/getting-started/installation</li>
+</ul>
+<blockquote>
+<p>ℹ️ We recommend using <a href="https://github.com/nvm-sh/nvm">nvm</a> to manage your Node.js versions. Nvm is a flexible node
+version manager that allows you to switch between different versions of Node.js effortlessly. This repository includes
+a <code>.nvmrc</code> file at the root of the project. If you have nvm installed, you can run <code>nvm use</code> at the root of the
+project to automatically switch to the appropriate version of Node.js.</p>
+</blockquote>
+<p>Following the installation of Foundry and Node.js, there's an additional dependency called <code>make</code> that needs to be
+addressed.</p>
+<p><code>make</code> is a build automation tool that employs a file known as a makefile to automate the construction of executable
+programs and libraries. The makefile details the process of deriving the target program from the source files and other
+dependencies. This allows developers to automate repetitive tasks and manage complex build processes efficiently. <code>make</code>
+is our primary tool in a multi-environment repository. It enables us to centralize all commands into a single file
+(<a href="./makefile">the makefile</a>), eliminating the need to deal with <code>npm</code> scripts defined in a package.json or remembering
+the various commands provided by the <code>foundry</code> cli. If you're unfamiliar with <code>make</code>, you can read more about it
+<a href="https://www.gnu.org/software/make/manual/make.html">here</a>.</p>
+<p><code>make</code> is automatically included in all modern Linux distributions. If you're using Linux, you should be able to use
+<code>make</code> without any additional steps. If not, you can likely find it in the package tool you usually use. MacOS users can
+install <code>make</code> using <a href="https://formulae.brew.sh/formula/make">Homebrew</a> with the following command:</p>
+<pre><code class="language-sh">brew install make
+</code></pre>
+<p>At this point, you should have all the required dependencies installed on your system.</p>
+<blockquote>
+<p>💡 Running make at the root of the project will display a list of all the available commands. This can be useful to
+know what you can do</p>
+</blockquote>
+<h3 id="installing-the-dependencies"><a class="header" href="#installing-the-dependencies">Installing the dependencies</a></h3>
+<p>To install the project dependencies, you can run the following command:</p>
+<pre><code class="language-sh">make install
+</code></pre>
+<p>This command will install the forge dependencies in the <code>lib/</code> directory, the npm dependencies in the <code>node_modules</code>
+directory and the git hooks defined in the project (<a href="index.html#git-hooks">refer to the Git hooks section</a>s to learn more about
+them). These dependencies aren't shipped in production; they're utility dependencies used to build, test, lint, format,
+and more, for the project.</p>
+<blockquote>
+<p>⚠️ This package uses a dependency installed on the Github package registry, meaning you need to authenticate with
+GitHub Packages to install it. For more information, refer to the <a href="index.html#setup-github-registry">troubleshooting section</a>.
+We're open to deploying it on the npm registry if there's a demand for it. Please open an issue if you'd like to see
+this package on the npm registry.</p>
+</blockquote>
+<p>Next, let's set up the git hooks.</p>
+<h3 id="git-hooks"><a class="header" href="#git-hooks">Git hooks</a></h3>
+<p>This project uses <code>Lefthook</code> to manage Git hooks, which are scripts that run automatically when certain Git events
+occur, such as committing code or pushing changes to a remote repository. <code>Lefthook</code> simplifies the management and
+execution of these scripts.</p>
+<p>After installing the dependencies, you can configure the Git hooks by running the following command in the project
+directory:</p>
+<pre><code class="language-sh">make hooks-i
+</code></pre>
+<p>This command installs a Git hook that runs Lefthook before pushing code to a remote repository. If Lefthook fails, the
+push is aborted.</p>
+<p>If you wish to run Lefthook manually, you can use the following command:</p>
+<pre><code class="language-sh">make hooks
+</code></pre>
+<p>This will run all the Git hooks defined in the <a href="./lefthook.yml">lefthook</a> file.</p>
+<h4 id="skipping-git-hooks"><a class="header" href="#skipping-git-hooks">Skipping git hooks</a></h4>
+<p>Should you need to intentionally skip Lefthook, you can pass the <code>--no-verify</code> flag to the git push command. To bypass
+Lefthook when pushing code, use the following command:</p>
+<pre><code class="language-sh">git push origin --no-verify
+</code></pre>
+<h2 id="testing"><a class="header" href="#testing">Testing</a></h2>
+<h3 id="unit-tests"><a class="header" href="#unit-tests">Unit tests</a></h3>
+<p>The unit tests are stored in the <code>test</code> directory. They test individual functions of the package in isolation. These
+tests are automatically run by GitHub Actions with every push to the <code>main</code> branch and on every pull request targeting
+this branch. They are also automatically run by the git hook on every push to a remote repository if you have installed
+it (<a href="index.html#git-hooks">refer to the Git hooks section</a>). Alternatively, you can run them locally by executing the following
+command in the project directory:</p>
+<pre><code class="language-sh">make test
+</code></pre>
+<blockquote>
+<p>ℹ️ By adding the sufix <code>-v</code> the test command will run in verbose mode, displaying valuable output for debugging.</p>
+</blockquote>
+<p>For your information, these tests are written using <a href="https://book.getfoundry.sh/forge/tests">forge</a>, and some employ the
+property-based testing pattern <em>(fuzzing)</em> to generate random inputs for the functions under test.</p>
+<p>Additionally, some test fixtures have been generated using <a href="https://github.com/google/wycheproof">Google's wycheproof</a>
+project, which tests crypto libraries against known attacks. These fixtures are located in the
+<a href="./test/fixtures">fixtures</a> directory.</p>
+<p>The tests use two different <code>cheatcodes</code> you should be aware of:</p>
+<ul>
+<li><code>vm.readFile</code>: This cheatcode lets us read the fixtures data from the test/fixtures directory. This means that every
+time you run the test suite, the fixtures are read from the disk, eliminating the need to copy/paste the fixtures into
+the test files. However, if you modify a fixture, you need to rerun the tests to see the changes. More information is
+available <a href="https://book.getfoundry.sh/cheatcodes/fs?highlight=readFile">here</a>.</li>
+<li><code>vm.ffi</code>: This cheatcode allows us to execute an arbitrary command during the test suite. This cheatcode is not
+enabled by default when creating a new foundry project, but in our case, it's enabled in our configuration
+(<a href="./foundry.toml">foundry configuration</a>) for all tests. This cheatcode is used to run the computation library that
+calculates 256 points on the secp256r1 elliptic curve from a public key. This is required for the variants that need
+these points to be deployed on-chain. Therefore, even if it's not explicit, every time you run the test suite, a
+Node.js script is executed multiple times. You can learn more about the library we use
+<a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation">here</a>.</li>
+</ul>
+<blockquote>
+<p>📖 Cheatcodes are special instructions exposed by Foundry to enhance the developer experience. Learn more about them
+<a href="https://book.getfoundry.sh/cheatcodes/">here</a>.</p>
+</blockquote>
+<blockquote>
+<p>💡 Run <code>make</code> to learn how to run the test in verbose mode, or to display the coverage or the gas consumption.</p>
+</blockquote>
+<h3 id="quality"><a class="header" href="#quality">Quality</a></h3>
+<p>This repository uses <code>forge-fmt</code>, <code>solhint</code> and <code>prettier</code> to enforce code quality. These tools are automatically run by
+the GitHub Actions on every push to the <code>main</code> branch and on every pull request targeting this branch. They are also
+automatically run by the git hook on every push to a remote repository if you have installed it
+(<a href="index.html#git-hooks">refer to the Git hooks section</a>). Alternatively, you can run them locally by executing the following
+command in the project directory:</p>
+<pre><code class="language-sh">make lint # run the linter
+make format # run the formatter
+make quality # run both
+</code></pre>
+<blockquote>
+<p>ℹ️ By adding the sufix <code>-fix</code> the linter and the formatter will try to fix the issues automatically.</p>
+</blockquote>
+<h2 id="troubleshootings"><a class="header" href="#troubleshootings">Troubleshootings</a></h2>
+<h3 id="setup-github-registry"><a class="header" href="#setup-github-registry">Setup Github registry</a></h3>
+<p>You need to configure npm to use the Github registry. You can do so using the following command in your terminal:</p>
+<pre><code class="language-sh">npm config set @0x90d2b2b7fb7599eebb6e7a32980857d8:registry=https://npm.pkg.github.com
+</code></pre>
+<p>This will instruct npm to use the Github registry for packages deployed by <code>@0x90d2b2b7fb7599eebb6e7a32980857d8</code>.</p>
+<p>Once the Github registry is configured, you have to create a <strong>classic</strong> token on Github. To do so, go to your
+<a href="https://github.com/settings/tokens">Github settings</a>. The token must have the read:packages scope. Once you have
+created the token, use the following command in your terminal to authenticate to the Github registry:</p>
+<pre><code class="language-sh">npm login --auth-type=legacy --registry=https://npm.pkg.github.com
+</code></pre>
+<p>Your Github username is the username, and the password is the token you just created. At this point, your git should be
+configured to use the Github Package Registry for our packages.</p>
+<blockquote>
+<p>⚠️ For more information, please refer to the
+<a href="https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#installing-a-package">GitHub documentation</a></p>
+</blockquote>
+<h2 id="acknowledgements"><a class="header" href="#acknowledgements">Acknowledgements</a></h2>
+<p>Special thanks to <a href="https://github.com/rdubois-crypto">rdubois-crypto</a> for developing the reference implementation
+<a href="https://github.com/rdubois-crypto/FreshCryptoLib">here</a> and for the invaluable cryptographic guidance. The
+implementation, and more precisely, all the ingenious mathematical tricks you can discover in this repository, are from
+his mind. My role here was to clean up his work to improve the chances of accepting contributions. All credit goes to
+him.</p>
+<p>If you want to learn more about the math behind this project, check out
+<a href="https://eprint.iacr.org/2023/939.pdf">this publication</a> written by
+<a href="https://twitter.com/RenaudDUBOIS10">rdubois-crypto</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="contents"><a class="header" href="#contents">Contents</a></h1>
 <ul>
 <li><a href="src/utils/ECDSA.sol/library.ECDSA.html">ECDSA</a></li>
-<li><a href="src/utils/secp256r1.sol/function.nModInv.html">nModInv</a></li>
 <li><a href="src/utils/secp256r1.sol/function.pModInv.html">pModInv</a></li>
+<li><a href="src/utils/secp256r1.sol/function.nModInv.html">nModInv</a></li>
 <li><a href="src/utils/secp256r1.sol/constants.secp256r1.html">secp256r1 constants</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa"><a class="header" href="#ecdsa">ECDSA</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/239f9b6d51267c996532ee912733746b2f5a6180/src/utils/ECDSA.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/b9dd17232b443152446d27294a00bf3f71d434e6/src/utils/ECDSA.sol">Git Source</a></p>
 <p>Library for handling Elliptic Curve Digital Signature Algorithm (ECDSA) operations on a compatible curve</p>
 <h2 id="functions"><a class="header" href="#functions">Functions</a></h2>
 <h3 id="zz2aff"><a class="header" href="#zz2aff">zz2Aff</a></h3>
@@ -282,23 +542,8 @@ https://hyperelliptic.org/EFD/g1p/auto-shortw-xyzz-3.html#addition-add-2008-s*</
 <tr><td><code>x2</code></td><td><code>uint256</code></td><td>The X-coordinate of the resulting point</td></tr>
 <tr><td><code>y2</code></td><td><code>uint256</code></td><td>The Y-coordinate of the resulting point</td></tr>
 </tbody></table>
-</div><div style="break-before: page; page-break-before: always;"></div><h1 id="nmodinv"><a class="header" href="#nmodinv">nModInv</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/239f9b6d51267c996532ee912733746b2f5a6180/src/utils/secp256r1.sol">Git Source</a></p>
-<p>Calculate the modular inverse of a given integer, which is the inverse of this integer modulo n.</p>
-<p><em>Uses the ModExp precompiled contract at address 0x05 for fast computation using little Fermat theorem</em></p>
-<pre><code class="language-solidity">function nModInv(uint256 self) returns (uint256 result);
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>self</code></td><td><code>uint256</code></td><td>The integer of which to find the modular inverse</td></tr>
-</tbody></table>
-</div>
-<p><strong>Returns</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>result</code></td><td><code>uint256</code></td><td>The modular inverse of the input integer. If the modular inverse doesn't exist, it revert the tx</td></tr>
-</tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="pmodinv"><a class="header" href="#pmodinv">pModInv</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/239f9b6d51267c996532ee912733746b2f5a6180/src/utils/secp256r1.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/b9dd17232b443152446d27294a00bf3f71d434e6/src/utils/secp256r1.sol">Git Source</a></p>
 <p>Calculate the modular inverse of a given integer, which is the inverse of this integer modulo p.</p>
 <p><em>Uses the ModExp precompiled contract at address 0x05 for fast computation using little Fermat theorem</em></p>
 <pre><code class="language-solidity">function pModInv(uint256 self) returns (uint256 result);
@@ -312,8 +557,23 @@ https://hyperelliptic.org/EFD/g1p/auto-shortw-xyzz-3.html#addition-add-2008-s*</
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>result</code></td><td><code>uint256</code></td><td>The modular inverse of the input integer. If the modular inverse doesn't exist, it revert the tx</td></tr>
 </tbody></table>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="nmodinv"><a class="header" href="#nmodinv">nModInv</a></h1>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/b9dd17232b443152446d27294a00bf3f71d434e6/src/utils/secp256r1.sol">Git Source</a></p>
+<p>Calculate the modular inverse of a given integer, which is the inverse of this integer modulo n.</p>
+<p><em>Uses the ModExp precompiled contract at address 0x05 for fast computation using little Fermat theorem</em></p>
+<pre><code class="language-solidity">function nModInv(uint256 self) returns (uint256 result);
+</code></pre>
+<p><strong>Parameters</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>self</code></td><td><code>uint256</code></td><td>The integer of which to find the modular inverse</td></tr>
+</tbody></table>
+</div>
+<p><strong>Returns</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>result</code></td><td><code>uint256</code></td><td>The modular inverse of the input integer. If the modular inverse doesn't exist, it revert the tx</td></tr>
+</tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="constants"><a class="header" href="#constants">Constants</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/239f9b6d51267c996532ee912733746b2f5a6180/src/utils/secp256r1.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/b9dd17232b443152446d27294a00bf3f71d434e6/src/utils/secp256r1.sol">Git Source</a></p>
 <h3 id="p"><a class="header" href="#p">p</a></h3>
 <pre><code class="language-solidity">uint256 constant p = 0xFFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF;
 </code></pre>
@@ -345,7 +605,7 @@ https://hyperelliptic.org/EFD/g1p/auto-shortw-xyzz-3.html#addition-add-2008-s*</
 <pre><code class="language-solidity">address constant MODEXP_PRECOMPILE = 0x0000000000000000000000000000000000000005;
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa256r1precomputeinternal"><a class="header" href="#ecdsa256r1precomputeinternal">ECDSA256r1PrecomputeInternal</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/239f9b6d51267c996532ee912733746b2f5a6180/src/ECDSA256PrecomputeInternal.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/b9dd17232b443152446d27294a00bf3f71d434e6/src/ECDSA256PrecomputeInternal.sol">Git Source</a></p>
 <p>This library is for ECDSA verification using a precomputed table of multiples of P and Q. The Shamir's
 Secret Sharing scheme is used in 8 dimensions. The precomputed table must be stored <strong>in</strong> the bytecode of
 the contract calling the verify function of this library (using delegatecall as it's automatically done in
@@ -402,7 +662,7 @@ the contrat that uses this library</p>
 <tr><td><code>&lt;none&gt;</code></td><td><code>bool</code></td><td>True if the signature is valid, false otherwise.</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa256r1"><a class="header" href="#ecdsa256r1">ECDSA256r1</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/239f9b6d51267c996532ee912733746b2f5a6180/src/ECDSA256r1.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/b9dd17232b443152446d27294a00bf3f71d434e6/src/ECDSA256r1.sol">Git Source</a></p>
 <p>A library to verify ECDSA signatures made on the secp256r1 curve</p>
 <p><em>This is the easiest library to deal with but also the most expensive in terms of gas cost. Indeed, this library
 must calculate multiple points on the curve in order to verify the signature. Use it kmowingly.</em></p>
@@ -442,7 +702,7 @@ This function is the only one exposed by the library</p>
 <tr><td><code>&lt;none&gt;</code></td><td><code>bool</code></td><td>bool True if the signature is valid, false otherwise</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa256r1precompute"><a class="header" href="#ecdsa256r1precompute">ECDSA256r1Precompute</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/239f9b6d51267c996532ee912733746b2f5a6180/src/ECDSA256r1Precompute.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/b9dd17232b443152446d27294a00bf3f71d434e6/src/ECDSA256r1Precompute.sol">Git Source</a></p>
 <p>This library is for ECDSA verification using a precomputed shamir table of 256 points. The Shamir's
 Secret Sharing scheme is used in 8 dimensions. The precomputed table must be stored in an external contract
 upstream.</p>
