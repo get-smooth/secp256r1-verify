@@ -1,0 +1,21 @@
+name: Release on tag
+
+# Trigger the create release workflow on a tag event
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: "marvinpinto/action-automatic-releases@v1.2.1"
+        with:
+          repo_token: "${{ secrets.SMOOTH_QDQD_SECP256R1_RELEASE_TOKEN }}"
+          prerelease: false
