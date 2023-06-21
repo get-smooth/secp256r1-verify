@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: APACHE-2.0
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.19 <0.9.0;
 
 import "./secp256r1.sol" as Curve;
