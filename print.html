@@ -428,7 +428,7 @@ him.</p>
 <li><a href="src/utils/secp256r1.sol/constants.secp256r1.html">secp256r1 constants</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa"><a class="header" href="#ecdsa">ECDSA</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/58ed109d131bdd6f9afdfd2500051ebd74c39184/src/utils/ECDSA.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/5682deffb4c3f2aae8beb01f06d12ac6134e6c69/src/utils/ECDSA.sol">Git Source</a></p>
 <p>Library for handling Elliptic Curve Digital Signature Algorithm (ECDSA) operations on a compatible curve</p>
 <h2 id="functions"><a class="header" href="#functions">Functions</a></h2>
 <h3 id="zz2aff"><a class="header" href="#zz2aff">zz2Aff</a></h3>
@@ -545,7 +545,7 @@ https://hyperelliptic.org/EFD/g1p/auto-shortw-xyzz-3.html#addition-add-2008-s*</
 <tr><td><code>y2</code></td><td><code>uint256</code></td><td>The Y-coordinate of the resulting point</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="pmodinv"><a class="header" href="#pmodinv">pModInv</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/58ed109d131bdd6f9afdfd2500051ebd74c39184/src/utils/secp256r1.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/5682deffb4c3f2aae8beb01f06d12ac6134e6c69/src/utils/secp256r1.sol">Git Source</a></p>
 <p>Calculate the modular inverse of a given integer, which is the inverse of this integer modulo p.</p>
 <p><em>Uses the ModExp precompiled contract at address 0x05 for fast computation using little Fermat theorem</em></p>
 <pre><code class="language-solidity">function pModInv(uint256 self) returns (uint256 result);
@@ -560,7 +560,7 @@ https://hyperelliptic.org/EFD/g1p/auto-shortw-xyzz-3.html#addition-add-2008-s*</
 <tr><td><code>result</code></td><td><code>uint256</code></td><td>The modular inverse of the input integer. If the modular inverse doesn't exist, it revert the tx</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="nmodinv"><a class="header" href="#nmodinv">nModInv</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/58ed109d131bdd6f9afdfd2500051ebd74c39184/src/utils/secp256r1.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/5682deffb4c3f2aae8beb01f06d12ac6134e6c69/src/utils/secp256r1.sol">Git Source</a></p>
 <p>Calculate the modular inverse of a given integer, which is the inverse of this integer modulo n.</p>
 <p><em>Uses the ModExp precompiled contract at address 0x05 for fast computation using little Fermat theorem</em></p>
 <pre><code class="language-solidity">function nModInv(uint256 self) returns (uint256 result);
@@ -575,7 +575,7 @@ https://hyperelliptic.org/EFD/g1p/auto-shortw-xyzz-3.html#addition-add-2008-s*</
 <tr><td><code>result</code></td><td><code>uint256</code></td><td>The modular inverse of the input integer. If the modular inverse doesn't exist, it revert the tx</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="constants"><a class="header" href="#constants">Constants</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/58ed109d131bdd6f9afdfd2500051ebd74c39184/src/utils/secp256r1.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/5682deffb4c3f2aae8beb01f06d12ac6134e6c69/src/utils/secp256r1.sol">Git Source</a></p>
 <h3 id="p"><a class="header" href="#p">p</a></h3>
 <pre><code class="language-solidity">uint256 constant p = 0xFFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF;
 </code></pre>
@@ -607,7 +607,7 @@ https://hyperelliptic.org/EFD/g1p/auto-shortw-xyzz-3.html#addition-add-2008-s*</
 <pre><code class="language-solidity">address constant MODEXP_PRECOMPILE = 0x0000000000000000000000000000000000000005;
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa256r1precomputeinternal"><a class="header" href="#ecdsa256r1precomputeinternal">ECDSA256r1PrecomputeInternal</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/58ed109d131bdd6f9afdfd2500051ebd74c39184/src/ECDSA256PrecomputeInternal.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/5682deffb4c3f2aae8beb01f06d12ac6134e6c69/src/ECDSA256PrecomputeInternal.sol">Git Source</a></p>
 <p>This library is for ECDSA verification using a precomputed table of multiples of P and Q. The Shamir's
 Secret Sharing scheme is used in 8 dimensions. The precomputed table must be stored <strong>in</strong> the bytecode of
 the contract calling the verify function of this library (using delegatecall as it's automatically done in
@@ -664,7 +664,7 @@ the contrat that uses this library</p>
 <tr><td><code>&lt;none&gt;</code></td><td><code>bool</code></td><td>True if the signature is valid, false otherwise.</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa256r1"><a class="header" href="#ecdsa256r1">ECDSA256r1</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/58ed109d131bdd6f9afdfd2500051ebd74c39184/src/ECDSA256r1.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/5682deffb4c3f2aae8beb01f06d12ac6134e6c69/src/ECDSA256r1.sol">Git Source</a></p>
 <p>A library to verify ECDSA signatures made on the secp256r1 curve</p>
 <p><em>This is the easiest library to deal with but also the most expensive in terms of gas cost. Indeed, this library
 must calculate multiple points on the curve in order to verify the signature. Use it kmowingly.</em></p>
@@ -704,7 +704,7 @@ This function is the only one exposed by the library</p>
 <tr><td><code>&lt;none&gt;</code></td><td><code>bool</code></td><td>bool True if the signature is valid, false otherwise</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa256r1precompute"><a class="header" href="#ecdsa256r1precompute">ECDSA256r1Precompute</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/58ed109d131bdd6f9afdfd2500051ebd74c39184/src/ECDSA256r1Precompute.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/5682deffb4c3f2aae8beb01f06d12ac6134e6c69/src/ECDSA256r1Precompute.sol">Git Source</a></p>
 <p>This library is for ECDSA verification using a precomputed shamir table of 256 points. The Shamir's
 Secret Sharing scheme is used in 8 dimensions. The precomputed table must be stored in an external contract
 upstream.</p>
