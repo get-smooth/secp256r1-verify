@@ -131,8 +131,8 @@ contract ECDSATest is StdUtils, PRBTest {
         point0 = Point(0x5, 0x2);
         point1 = Point(0x5, 0x0);
         (x2, y2) = implementation.affAdd(point0.x, point0.y, point1.x, point1.y);
-        assertEq(x2, point1.x);
-        assertEq(y2, point1.y);
+        assertEq(x2, point0.x);
+        assertEq(y2, point0.y);
     }
 
     // TODO: Test behaviour when the precompile 0x05 ev

@@ -190,8 +190,10 @@ library ECDSA {
      */
     function affAdd(uint256 x0, uint256 y0, uint256 x1, uint256 y1) internal returns (uint256 x2, uint256 y2) {
         // check if the curve is the zero curve in affine rep
-        if (y0 == 0 || y1 == 0) {
+        if (y0 == 0) {
             (x2, y2) = (x1, y1);
+        } else if (y1 == 0) {
+            (x2, y2) = (x0, y0);
         } else {
             uint256 zz0;
             uint256 zzz0;
