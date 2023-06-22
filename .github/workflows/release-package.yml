@@ -1,6 +1,8 @@
 name: Release on tag
 
-# Trigger the create release workflow on a tag event
+# Trigger the create release workflow when a new tag
+# respecting the pattern `v*` is pushed to the repository and deploy
+# the new version of the documentation on the `gh-pages` branch.
 on:
   push:
     tags:
@@ -19,3 +21,25 @@ jobs:
         with:
           repo_token: "${{ secrets.SMOOTH_QDQD_SECP256R1_RELEASE_TOKEN }}"
           prerelease: false
+
+  deploy-doc:
+    needs: ["release"]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Build the documentation
+        run: make doc
+
+      - name: Deploy the documentation
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs/book
