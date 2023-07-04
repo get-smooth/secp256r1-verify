@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.19 <0.9.0;
 
-import "./secp256r1.sol" as Curve;
-import { p, a, b, gx, gy, n, MINUS_2, MINUS_2MODN, MINUS_1, MODEXP_PRECOMPILE } from "./secp256r1.sol";
+import { U256Modp, p, a, b, gx, gy, MINUS_2, MINUS_2MODN, MINUS_1, _0, _1, _2, _3 } from "./U256Modp.sol";
 
 /**
  * @title ECDSA Library
  * @notice Library for handling Elliptic Curve Digital Signature Algorithm (ECDSA) operations on a compatible curve
  */
 library ECDSA {
-    using { Curve.pModInv, Curve.nModInv } for uint256;
-
     /**
      * @notice Convert from XYZZ coordinates to affine coordinates
      *
@@ -23,21 +20,21 @@ library ECDSA {
      * @return x1 The X-coordinate of the point in affine representation
      * @return y1 The Y-coordinate of the point in affine representation
      */
-    function zz2Aff(uint256 x, uint256 y, uint256 zz, uint256 zzz) internal returns (uint256 x1, uint256 y1) {
+    function zz2Aff(U256Modp x, U256Modp y, U256Modp zz, U256Modp zzz) internal returns (U256Modp x1, U256Modp y1) {
         // 1/zzz
-        uint256 zzzInv = zzz.pModInv();
+        U256Modp zzzInv = zzz.pModInv();
 
         // Y/zzz -- OUTPUT
-        y1 = mulmod(y, zzzInv, p);
+        y1 = y * zzzInv;
 
         // 1/z
-        uint256 _b = mulmod(zz, zzzInv, p);
+        U256Modp _b = zz * zzzInv;
 
         // 1/zz
-        zzzInv = mulmod(_b, _b, p);
+        zzzInv = _b * _b;
 
         // X/zz -- OUTPUT
-        x1 = mulmod(x, zzzInv, p);
+        x1 = x * zzzInv;
     }
 
     /**
@@ -54,46 +51,48 @@ library ECDSA {
      * @return P3 The ZZZ value of the resulting point
      */
     function zzAddN(
-        uint256 x1,
-        uint256 y1,
-        uint256 zz1,
-        uint256 zzz1,
-        uint256 x2,
-        uint256 y2
+        U256Modp x1,
+        U256Modp y1,
+        U256Modp zz1,
+        U256Modp zzz1,
+        U256Modp x2,
+        U256Modp y2
     )
         internal
         pure
-        returns (uint256 P0, uint256 P1, uint256 P2, uint256 P3)
+        returns (U256Modp P0, U256Modp P1, U256Modp P2, U256Modp P3)
     {
-        if (y1 == 0) {
-            return (x2, y2, 1, 1);
-        }
+        unchecked {
+            if (y1.isZero()) {
+                return (x2, y2, _1, _1);
+            }
 
-        assembly ("memory-safe") {
-            y1 := sub(p, y1)
-            y2 := addmod(mulmod(y2, zzz1, p), y1, p)
-            x2 := addmod(mulmod(x2, zz1, p), sub(p, x1), p)
+            y1 = y1.inv();
+
+            y2 = y2 * zzz1 + y1;
+
+            x2 = x2 * zz1 + x1.inv();
 
             // PP = P^2
-            P0 := mulmod(x2, x2, p)
+            P0 = x2 * x2;
 
             // PPP = P*PP
-            P1 := mulmod(P0, x2, p)
+            P1 = P0 * x2;
 
             // ZZ3 = ZZ1*PP
-            P2 := mulmod(zz1, P0, p)
+            P2 = zz1 * P0;
 
             // ZZZ3 = ZZZ1*PPP
-            P3 := mulmod(zzz1, P1, p)
+            P3 = zzz1 * P1;
 
             // Q = X1*PP
-            zz1 := mulmod(x1, P0, p)
+            zz1 = x1 * P0;
 
             // R^2-PPP-2*Q
-            P0 := addmod(addmod(mulmod(y2, y2, p), sub(p, P1), p), mulmod(MINUS_2, zz1, p), p)
+            P0 = (y2 * y2 + P1.inv()) + (zz1 * MINUS_2);
 
             // R*(Q-X3)
-            P1 := addmod(mulmod(addmod(zz1, sub(p, P0), p), y2, p), mulmod(y1, P1, p), p)
+            P1 = (zz1 + P0.inv()) * y2 + (y1 * P1);
         }
 
         return (P0, P1, P2, P3);
@@ -112,45 +111,45 @@ library ECDSA {
      * @return P3 The ZZZ value of the resulting point after doubling
      */
     function zzDouble(
-        uint256 x,
-        uint256 y,
-        uint256 zz,
-        uint256 zzz
+        U256Modp x,
+        U256Modp y,
+        U256Modp zz,
+        U256Modp zzz
     )
         internal
         pure
-        returns (uint256 P0, uint256 P1, uint256 P2, uint256 P3)
+        returns (U256Modp P0, U256Modp P1, U256Modp P2, U256Modp P3)
     {
-        assembly ("memory-safe") {
+        unchecked {
             // U=2*Y1
-            P0 := mulmod(2, y, p)
+            P0 = y * _2;
 
             // V=U^2
-            P2 := mulmod(P0, P0, p)
+            P2 = P0 * P0;
 
             // S = X1*V
-            P3 := mulmod(x, P2, p)
+            P3 = x * P2;
 
             // W=UV
-            P1 := mulmod(P0, P2, p)
+            P1 = P0 * P2;
 
             // zz3=V*ZZ1 -- OUTPUT
-            P2 := mulmod(P2, zz, p)
+            P2 = P2 * zz;
 
             // M=3*(X1-ZZ1)*(X1+ZZ1)
-            zz := mulmod(3, mulmod(addmod(x, sub(p, zz), p), addmod(x, zz, p), p), p)
+            zz = _3 * ((x + zz.inv()) * (x + zz)); //?
 
             // X3=M^2-2S -- OUTPUT
-            P0 := addmod(mulmod(zz, zz, p), mulmod(MINUS_2, P3, p), p)
+            P0 = zz * zz + MINUS_2 * P3;
 
             // M(S-X3)
-            x := mulmod(zz, addmod(P3, sub(p, P0), p), p)
+            x = zz * (P3 + P0.inv());
 
             // zzz3=W*zzz1 -- OUTPUT
-            P3 := mulmod(P1, zzz, p)
+            P3 = P1 * zzz;
 
             // Y3= M(S-X3)-W*Y1 -- OUTPUT
-            P1 := addmod(x, sub(p, mulmod(P1, y, p)), p)
+            P1 = x + (P1 * y).inv();
         }
     }
 
@@ -160,20 +159,20 @@ library ECDSA {
      * @param y The Y-coordinate of the point
      * @return bool True if the point is on the curve, false otherwise
      */
-    function affIsOnCurve(uint256 x, uint256 y) internal pure returns (bool) {
-        if (0 == x || x == p || 0 == y || y == p) {
+    function affIsOnCurve(U256Modp x, U256Modp y) internal pure returns (bool) {
+        if (_0 == x || x == p || _0 == y || y == p) {
             return false;
         }
 
         unchecked {
             // y^2
-            uint256 LHS = mulmod(y, y, p);
+            U256Modp LHS = y * y;
 
             // x^3+ax
-            uint256 RHS = addmod(mulmod(mulmod(x, x, p), x, p), mulmod(x, a, p), p);
+            U256Modp RHS = x * x * x + a * x;
 
             // x^3 + a*x + b
-            RHS = addmod(RHS, b, p);
+            RHS = RHS + b;
 
             return LHS == RHS;
         }
@@ -188,17 +187,17 @@ library ECDSA {
      * @return x2 The X-coordinate of the resulting point
      * @return y2 The Y-coordinate of the resulting point
      */
-    function affAdd(uint256 x0, uint256 y0, uint256 x1, uint256 y1) internal returns (uint256 x2, uint256 y2) {
+    function affAdd(U256Modp x0, U256Modp y0, U256Modp x1, U256Modp y1) internal returns (U256Modp x2, U256Modp y2) {
         // check if the curve is the zero curve in affine rep
-        if (y0 == 0) {
+        if (y0.isZero()) {
             (x2, y2) = (x1, y1);
-        } else if (y1 == 0) {
+        } else if (y1.isZero()) {
             (x2, y2) = (x0, y0);
         } else {
-            uint256 zz0;
-            uint256 zzz0;
+            U256Modp zz0;
+            U256Modp zzz0;
 
-            (x0, y0, zz0, zzz0) = zzAddN(x0, y0, 1, 1, x1, y1);
+            (x0, y0, zz0, zzz0) = zzAddN(x0, y0, _1, _1, x1, y1);
             (x2, y2) = zz2Aff(x0, y0, zz0, zzz0);
         }
     }
