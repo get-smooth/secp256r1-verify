@@ -3,16 +3,16 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import { PRBTest } from "../../lib/prb-test/src/PRBTest.sol";
 import { StdUtils } from "../../lib/forge-std/src/StdUtils.sol";
-import { p, a, n } from "../../src/utils/secp256r1.sol";
-import "../../src/utils/secp256r1.sol" as curve;
+import { p, a, n } from "../../src/utils/constants.sol";
+import { nModInv, pModInv } from "../../src/utils/modInv.sol";
 
 contract ImplementationCurve {
-    function nModInv(uint256 x) external returns (uint256) {
-        return curve.nModInv(x);
+    function nModInvWrapper(uint256 x) external returns (uint256) {
+        return nModInv(x);
     }
 
-    function pModInv(uint256 x) external returns (uint256) {
-        return curve.pModInv(x);
+    function pModInvWrapper(uint256 x) external returns (uint256) {
+        return pModInv(x);
     }
 }
 
@@ -36,7 +36,7 @@ contract Secp256r1Test is StdUtils, PRBTest {
         // bound the fuzzed value between 1 and n-1
         valueToInvert = bound(valueToInvert, 1, n - 1);
 
-        uint256 invertedValue = implementation.nModInv(valueToInvert);
+        uint256 invertedValue = implementation.nModInvWrapper(valueToInvert);
         uint256 product = mulmod(invertedValue, valueToInvert, n);
         assertEq(product, 1);
     }
@@ -51,7 +51,7 @@ contract Secp256r1Test is StdUtils, PRBTest {
         // bound the fuzzed value between 1 and p-1
         valueToInvert = bound(valueToInvert, 1, p - 1);
 
-        uint256 invertedValue = implementation.pModInv(valueToInvert);
+        uint256 invertedValue = implementation.pModInvWrapper(valueToInvert);
         uint256 product = mulmod(invertedValue, valueToInvert, p);
         assertEq(product, 1);
     }
