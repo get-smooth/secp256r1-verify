@@ -150,5 +150,5 @@ lint: lint
 lint-fix: lint-fix
 format: prettier
 format-fix: prettier-fix
-quality: lint prettier
+quality: lint format
 install: install-dependencies lefthok-install
