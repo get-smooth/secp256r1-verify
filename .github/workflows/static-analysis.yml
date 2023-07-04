@@ -25,6 +25,10 @@ on:
 
 jobs:
   test:
+    # Disable this job for now as Slither does not fully support the combo UDO+IR generation
+    # We should monitor the progress of Slither and re-enable this job when it is ready
+    # https://github.com/crytic/slither/releases
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
