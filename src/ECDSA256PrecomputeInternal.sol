@@ -20,12 +20,15 @@ function mulmuladd(uint256 scalar_u, uint256 scalar_v, uint256 precomputedOffset
         while (T[0] == 0) {
             zz = zz - 1;
             // TODO: TBD case of msb octobit is null
+            // TODO: SOLHINT reduce line length
+            /* solhint-disable max-line-length */
             T[0] = 64
                 * (
                     128 * ((scalar_v >> zz) & 1) + 64 * ((scalar_v >> (zz - 64)) & 1) + 32 * ((scalar_v >> (zz - 128)) & 1)
                         + 16 * ((scalar_v >> (zz - 192)) & 1) + 8 * ((scalar_u >> zz) & 1) + 4 * ((scalar_u >> (zz - 64)) & 1)
                         + 2 * ((scalar_u >> (zz - 128)) & 1) + ((scalar_u >> (zz - 192)) & 1)
                 );
+            /* solhint-enable max-line-length  */
         }
     }
     assembly {

@@ -22,7 +22,8 @@ function getStraussShamirStep(U256Modp scalar_u, U256Modp scalar_v, U256Modp ind
 /// @param scalar_u Multiplie1r for basepoint G
 /// @param scalar_v Multiplier for input point Q
 /// @return X Resulting x-coordinate of the computed point
-/// TODO: Reduce cyclomatic complexity (from 13 to 8)
+/// TODO: SOLHINT Reduce cyclomatic complexity (from 13 to 8)
+/* solhint-disable-next-line code-complexity */
 function mulmuladd(U256Modp Q0, U256Modp Q1, U256Modp scalar_u, U256Modp scalar_v) returns (U256Modp X) {
     unchecked {
         U256Modp Y;
