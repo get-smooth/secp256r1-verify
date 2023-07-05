@@ -65,7 +65,7 @@ This approach computes `uG + vQ` using the Strauss-Shamir's trick on the secp256
 is the base point and Q is the public key. Though this is the least gas-efficient method, it's also the simplest to set
 up. Use this approach if you're not worried about verification process costs.
 
-### 2️⃣ The external precomputed points implementation (**Recommended**)
+### 2️⃣ The external precomputed points implementation
 
 The external precomputed points approach is our most established solution, found in the
 [ECDSA256r1Precompute file](./src/ECDSA256r1Precompute.sol). Unlike the traditional approach, this requires precomputing
@@ -151,6 +151,43 @@ before considering this approach.
 > table deployment. Meanwhile, if you want to precompute the points off-chain yourself, you can use the following
 > [library](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation) developed by us for this
 > purpose.
+
+## Gas reports
+
+These gas reports were produced using the `0.8.19` version of the Solidity compiler, specifically for the
+[`0.3.0`](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/releases/tag/v0.3.0) version of the
+library. The library version corresponds to commit
+[5436b12](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/commit/5436b12f40e3cb5d0f593709067b22054e4164b8).
+
+### The traditional implementation [🔗](#1️⃣-the-traditional-implementation)
+
+|                 |                 |        |        |        |
+| --------------- | --------------- | ------ | ------ | ------ |
+| Deployment Cost | Deployment Size |        |        |        |
+| 978643          | 4946            |        |        |        |
+| Function Name   | min             | avg    | median | max    |
+| verify          | 448             | 110273 | 197391 | 212108 |
+
+### The external precomputed points implementation [🔗](#2️⃣-the-external-precomputed-points-implementation-recommended)
+
+|                 |                 |       |        |       |
+| --------------- | --------------- | ----- | ------ | ----- |
+| Deployment Cost | Deployment Size |       |        |       |
+| 649708          | 3303            |       |        |       |
+| Function Name   | min             | avg   | median | max   |
+| verify          | 472             | 44794 | 59185  | 75396 |
+
+Although the prerequisites for implementing this approach are more complex, the gas cost for the verification process is
+over three times less expensive than the traditional method.
+
+> ℹ️ It's important to note that since 2021, there has been ongoing discussion about a potential yet unplanned overhaul
+> of the extcodecopy opcode. If such a revamp occurs, it could result in a significant increase in the gas cost of this
+> implementation. This is an issue worth monitoring. You can learn more about the possible revamp in this
+> [blog post](https://notes.ethereum.org/@vbuterin/witness_gas_cost_2).
+
+### The external precomputed points implementation [🔗](#3️⃣-the-internal-precomputed-points-implementation-work-in-progress)
+
+As this implementation is still work-in-progress, the benchmark is not yet available.
 
 ## Contributing
 
