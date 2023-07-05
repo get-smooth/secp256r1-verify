@@ -149,7 +149,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="ecdsa256r1"><a class="header" href="#ecdsa256r1">ECDSA256r1</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/c9515e19dee5036c09af0a6eb2305d6226fd0260/src/ECDSA256r1.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/5436b12f40e3cb5d0f593709067b22054e4164b8/src/ECDSA256r1.sol">Git Source</a></p>
 <p>A library to verify ECDSA signatures made on the secp256r1 curve</p>
 <p><em>This is the easiest library to deal with but also the most expensive in terms of gas cost. Indeed, this library
 must calculate multiple points on the curve in order to verify the signature. Use it kmowingly.</em></p>
@@ -175,13 +175,15 @@ must calculate multiple points on the curve in order to verify the signature. Us
 <p>Verifies an ECDSA signature on the secp256r1 curve given the message, signature, and public key.
 This function is the only one exposed by the library</p>
 <p><em>Note the required interactions with the precompled contract can revert the transaction</em></p>
-<pre><code class="language-solidity">function verify(bytes32 message, uint256[2] calldata rs, uint256[2] calldata Q) external returns (bool);
+<pre><code class="language-solidity">function verify(bytes32 message, uint256 r, uint256 s, uint256 qx, uint256 qy) external returns (bool);
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>message</code></td><td><code>bytes32</code></td><td>The original message that was signed</td></tr>
-<tr><td><code>rs</code></td><td><code>uint256[2]</code></td><td>uint256[2] The r and s values of the ECDSA signature.</td></tr>
-<tr><td><code>Q</code></td><td><code>uint256[2]</code></td><td>The public key used for the signature, in the format [Qx, Qy]</td></tr>
+<tr><td><code>r</code></td><td><code>uint256</code></td><td>uint256 The r value of the ECDSA signature.</td></tr>
+<tr><td><code>s</code></td><td><code>uint256</code></td><td>uint256 The s value of the ECDSA signature.</td></tr>
+<tr><td><code>qx</code></td><td><code>uint256</code></td><td>The x value of the public key used for the signature</td></tr>
+<tr><td><code>qy</code></td><td><code>uint256</code></td><td>The y value of the public key used for the signature</td></tr>
 </tbody></table>
 </div>
 <p><strong>Returns</strong></p>
