@@ -1,0 +1,5 @@
+# javascript dependencies
+node_modules
+
+# the directory where all the tests belong
+tests
