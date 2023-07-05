@@ -181,24 +181,25 @@ library ECDSA256r1Precompute {
     /// @notice Verifies an ECDSA signature using a precomputed table of multiples of P and Q stored in an external
     ///         contract
     /// @param message The message to verify
-    /// @param rs tuple [r, s] representing the ECDSA signature
+    /// @param r uint256 The r value of the ECDSA signature.
+    /// @param s uint256 The s value of the ECDSA signature.
     /// @param precomputedTable The address of the external contract containing the precomputations for Shamir's trick.
     ///        It is expected the contract store the precomputations as its bytecode. The contract is not supposed
     ///        to be functional.
     /// @return True if the signature is valid, false otherwise.
     /// @dev Note the required interactions with the precompled contract can revert the transaction
-    function verify(bytes32 message, uint256[2] calldata rs, address precomputedTable) external returns (bool) {
+    function verify(bytes32 message, uint256 r, uint256 s, address precomputedTable) external returns (bool) {
         // check the validity of the signature
-        if (rs[0] == 0 || rs[0] >= n || rs[1] == 0 || rs[1] >= n) {
+        if (r == 0 || r >= n || s == 0 || s >= n) {
             return false;
         }
 
         // perform the Shamir's trick in order to calculate the x coordinate of the point
-        uint256 sInv = rs[1].nModInv();
-        uint256 X = mulmuladd(mulmod(uint256(message), sInv, n), mulmod(rs[0], sInv, n), precomputedTable);
+        uint256 sInv = s.nModInv();
+        uint256 X = mulmuladd(mulmod(uint256(message), sInv, n), mulmod(r, sInv, n), precomputedTable);
 
         assembly {
-            X := addmod(X, sub(n, calldataload(rs)), n)
+            X := addmod(X, sub(n, r), n)
         }
 
         return X == 0;

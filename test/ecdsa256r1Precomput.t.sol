@@ -7,14 +7,18 @@ import { ECDSA, Curve, n } from "../src/utils/ECDSA.sol";
 import { ECDSA256r1Precompute } from "../src/ECDSA256r1Precompute.sol";
 
 struct TestVectors {
-    uint256[2] pubKey;
+    // public key
+    uint256 qx;
+    uint256 qy;
+    // number of tests
     uint256 numtests;
+    // JSON string containing the test vectors
     string fixtures;
 }
 
 contract ImplementationECDSA256r1Precompute {
-    function verify(bytes32 message, uint256[2] calldata rs, address precomputedTable) external returns (bool) {
-        return ECDSA256r1Precompute.verify(message, rs, precomputedTable);
+    function verify(bytes32 message, uint256 r, uint256 s, address precomputedTable) external returns (bool) {
+        return ECDSA256r1Precompute.verify(message, r, s, precomputedTable);
     }
 
     function mulmuladd(uint256 scalar_u, uint256 scalar_v, address precomputedTable) external returns (uint256) {
@@ -64,31 +68,29 @@ contract Ecdsa256r1PrecomputTest is StdUtils, PRBTest {
     /// @return testvectors The test vectors
     function _loadFixtures(bool flag) internal returns (TestVectors memory testvectors) {
         // all the content of the JSON file
-        string memory fixtures =
+        testvectors.fixtures =
             flag == true ? vm.readFile(VALID_VECTOR_FILE_PATH) : vm.readFile(INVALID_VECTOR_FILE_PATH);
 
-        uint256[2] memory pubKey;
-        pubKey[0] = vm.parseJsonUint(fixtures, ".keyx");
-        pubKey[1] = vm.parseJsonUint(fixtures, ".keyy");
-        uint256 numtests = vm.parseJsonUint(fixtures, ".NumberOfTests");
-
-        return TestVectors(pubKey, numtests, fixtures);
+        testvectors.qx = vm.parseJsonUint(testvectors.fixtures, ".keyx");
+        testvectors.qy = vm.parseJsonUint(testvectors.fixtures, ".keyy");
+        testvectors.numtests = vm.parseJsonUint(testvectors.fixtures, ".NumberOfTests");
     }
 
     /// @notice get the test vector n from the JSON string
     /// @param fixtures The JSON string containing the test vectors
     /// @param id The test vector number to get
-    /// @return rs The signature (r, s) of the test vector
+    /// @return r uint256 The r value of the ECDSA signature.
+    /// @return s uint256 The s value of the ECDSA signature.
     /// @return message The message of the test vector
     function _getTestVector(
         string memory fixtures,
         string memory id
     )
         internal
-        returns (uint256[2] memory rs, bytes32 message)
+        returns (uint256 r, uint256 s, bytes32 message)
     {
-        rs[0] = vm.parseJsonUint(fixtures, string.concat(".sigx_", id));
-        rs[1] = vm.parseJsonUint(fixtures, string.concat(".sigy_", id));
+        r = vm.parseJsonUint(fixtures, string.concat(".sigx_", id));
+        s = vm.parseJsonUint(fixtures, string.concat(".sigy_", id));
         message = vm.parseJsonBytes32(fixtures, string.concat(".msg_", id));
     }
 
@@ -112,7 +114,7 @@ contract Ecdsa256r1PrecomputTest is StdUtils, PRBTest {
     /// @dev Uses `_precomputeShamirTable` function to generate the precomputed table
     modifier _preparePrecomputeTable() {
         // generate the precomputed table
-        bytes memory precompute = _precomputeShamirTable(validVectors.pubKey[0], validVectors.pubKey[1]);
+        bytes memory precompute = _precomputeShamirTable(validVectors.qx, validVectors.qy);
 
         // set the precomputed points as the bytecode of the target contract
         vm.etch(precomputeAddress, precompute);
@@ -155,9 +157,9 @@ contract Ecdsa256r1PrecomputTest is StdUtils, PRBTest {
 
         for (uint256 i = 1; i <= testVectors.numtests; i++) {
             // get the test vector (message, signature)
-            (uint256[2] memory rs, bytes32 message) = _getTestVector(testVectors.fixtures, vm.toString(i));
+            (uint256 r, uint256 s, bytes32 message) = _getTestVector(testVectors.fixtures, vm.toString(i));
             // run the verification function with the test vector
-            bool isValid = implementation.verify(message, rs, precomputeAddress);
+            bool isValid = implementation.verify(message, r, s, precomputeAddress);
             // ensure the result is the expected one
             assertTrue(isValid);
         }
@@ -171,9 +173,9 @@ contract Ecdsa256r1PrecomputTest is StdUtils, PRBTest {
 
         for (uint256 i = 1; i <= testVectors.numtests; i++) {
             // get the test vector (message, signature)
-            (uint256[2] memory rs, bytes32 message) = _getTestVector(testVectors.fixtures, vm.toString(i));
+            (uint256 r, uint256 s, bytes32 message) = _getTestVector(testVectors.fixtures, vm.toString(i));
             // run the verification function with the test vector
-            bool isValid = implementation.verify(message, rs, precomputeAddress);
+            bool isValid = implementation.verify(message, r, s, precomputeAddress);
             // ensure the result is the expected one
             assertFalse(isValid);
         }
@@ -183,27 +185,27 @@ contract Ecdsa256r1PrecomputTest is StdUtils, PRBTest {
     /// @dev Ensures that incorrect signatures are not valid
     function test_VerifyIncorrectSignatureFail() external _preparePrecomputeTable {
         // expect to fail because rs[0] == 0
-        bool isValid = implementation.verify(bytes32("hello"), [uint256(0), uint256(1)], precomputeAddress);
+        bool isValid = implementation.verify(bytes32("hello"), uint256(0), uint256(1), precomputeAddress);
         assertFalse(isValid);
 
         // expect to fail because rs[1] == 0
-        isValid = implementation.verify(bytes32("hello"), [uint256(1), uint256(0)], precomputeAddress);
+        isValid = implementation.verify(bytes32("hello"), uint256(1), uint256(0), precomputeAddress);
         assertFalse(isValid);
 
         // expect to fail because rs[0] > n
-        isValid = implementation.verify(bytes32("hello"), [n + 1, uint256(1)], precomputeAddress);
+        isValid = implementation.verify(bytes32("hello"), n + 1, uint256(1), precomputeAddress);
         assertFalse(isValid);
 
         // expect to fail because rs[0] == n
-        isValid = implementation.verify(bytes32("hello"), [n, uint256(1)], precomputeAddress);
+        isValid = implementation.verify(bytes32("hello"), n, uint256(1), precomputeAddress);
         assertFalse(isValid);
 
         // expect to fail because rs[1] > n
-        isValid = implementation.verify(bytes32("hello"), [uint256(1), n + 1], precomputeAddress);
+        isValid = implementation.verify(bytes32("hello"), uint256(1), n + 1, precomputeAddress);
         assertFalse(isValid);
 
         // expect to fail because rs[1] == n
-        isValid = implementation.verify(bytes32("hello"), [uint256(1), n], precomputeAddress);
+        isValid = implementation.verify(bytes32("hello"), uint256(1), n, precomputeAddress);
         assertFalse(isValid);
     }
 
@@ -211,11 +213,11 @@ contract Ecdsa256r1PrecomputTest is StdUtils, PRBTest {
     /// @dev Ensures that incorrect addresses fail verification (0x00 + precompile addresses + some extra empty ones)
     function test_VerifyIncorectAddressesFail() external _preparePrecomputeTable {
         // get a valid test vector (message, signature)
-        (uint256[2] memory rs, bytes32 message) = _getTestVector(validVectors.fixtures, "1");
+        (uint256 r, uint256 s, bytes32 message) = _getTestVector(validVectors.fixtures, "1");
 
         for (uint160 addr = 0; addr <= 20; addr++) {
             // run the verification function with the correct test vector BUT an invalid address
-            bool isValid = implementation.verify(message, rs, address(addr));
+            bool isValid = implementation.verify(message, r, s, address(addr));
             assertFalse(isValid);
         }
     }
@@ -229,7 +231,7 @@ contract Ecdsa256r1PrecomputTest is StdUtils, PRBTest {
         TestVectors memory testVectors = invalidVectors;
 
         // get the test vector (message, signature)
-        (uint256[2] memory rs, bytes32 message) = _getTestVector(testVectors.fixtures, "1");
+        (uint256 r,, bytes32 message) = _getTestVector(testVectors.fixtures, "1");
 
         // minimal fixtures
         uint256 sInv =
@@ -239,7 +241,7 @@ contract Ecdsa256r1PrecomputTest is StdUtils, PRBTest {
 
         // run the verification function with the test vector and the fixtures
         uint256 result =
-            implementation.mulmuladd(mulmod(uint256(message), sInv, n), mulmod(rs[0], sInv, n), precomputeAddress);
+            implementation.mulmuladd(mulmod(uint256(message), sInv, n), mulmod(r, sInv, n), precomputeAddress);
 
         assertEq(result, expected);
     }

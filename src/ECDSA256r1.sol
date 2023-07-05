@@ -192,30 +192,32 @@ library ECDSA256r1 {
     /// @notice Verifies an ECDSA signature on the secp256r1 curve given the message, signature, and public key.
     ///         This function is the only one exposed by the library
     /// @param message The original message that was signed
-    /// @param rs uint256[2] The r and s values of the ECDSA signature.
-    /// @param Q The public key used for the signature, in the format [Qx, Qy]
+    /// @param r uint256 The r value of the ECDSA signature.
+    /// @param s uint256 The s value of the ECDSA signature.
+    /// @param qx The x value of the public key used for the signature
+    /// @param qy The y value of the public key used for the signature
     /// @return bool True if the signature is valid, false otherwise
     /// @dev Note the required interactions with the precompled contract can revert the transaction
-    function verify(bytes32 message, uint256[2] calldata rs, uint256[2] calldata Q) external returns (bool) {
+    function verify(bytes32 message, uint256 r, uint256 s, uint256 qx, uint256 qy) external returns (bool) {
         // check the validity of the signature
-        if (rs[0] == 0 || rs[0] >= n || rs[1] == 0 || rs[1] >= n) {
+        if (r == 0 || r >= n || s == 0 || s >= n) {
             return false;
         }
 
         // check the public key is on the curve
-        if (!ECDSA.affIsOnCurve(Q[0], Q[1])) {
+        if (!ECDSA.affIsOnCurve(qx, qy)) {
             return false;
         }
 
         // calculate the scalars used for the multiplication of the point
-        uint256 sInv = rs[1].nModInv();
+        uint256 sInv = s.nModInv();
         uint256 scalar_u = mulmod(uint256(message), sInv, n);
-        uint256 scalar_v = mulmod(rs[0], sInv, n);
+        uint256 scalar_v = mulmod(r, sInv, n);
 
-        uint256 x1 = mulmuladd(Q[0], Q[1], scalar_u, scalar_v);
+        uint256 x1 = mulmuladd(qx, qy, scalar_u, scalar_v);
 
         assembly {
-            x1 := addmod(x1, sub(n, calldataload(rs)), n)
+            x1 := addmod(x1, sub(n, r), n)
         }
 
         return x1 == 0;
