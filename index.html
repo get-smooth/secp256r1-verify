@@ -198,7 +198,7 @@ library and interact with it by calling its singular exposed function, <code>ver
 <p>This approach computes <code>uG + vQ</code> using the Strauss-Shamir's trick on the secp256r1 elliptic curve <strong>on-chain</strong>, where G
 is the base point and Q is the public key. Though this is the least gas-efficient method, it's also the simplest to set
 up. Use this approach if you're not worried about verification process costs.</p>
-<h3 id="2-the-external-precomputed-points-implementation-recommended"><a class="header" href="#2-the-external-precomputed-points-implementation-recommended">2️⃣ The external precomputed points implementation (<strong>Recommended</strong>)</a></h3>
+<h3 id="2-the-external-precomputed-points-implementation"><a class="header" href="#2-the-external-precomputed-points-implementation">2️⃣ The external precomputed points implementation</a></h3>
 <p>The external precomputed points approach is our most established solution, found in the
 <a href="./src/ECDSA256r1Precompute.sol">ECDSA256r1Precompute file</a>. Unlike the traditional approach, this requires precomputing
 a table of 256 points off-chain for each public key you wish to verify a message from.</p>
@@ -276,6 +276,37 @@ table deployment. Meanwhile, if you want to precompute the points off-chain your
 <a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation">library</a> developed by us for this
 purpose.</p>
 </blockquote>
+<h2 id="gas-reports"><a class="header" href="#gas-reports">Gas reports</a></h2>
+<p>These gas reports were produced using the <code>0.8.19</code> version of the Solidity compiler, specifically for the
+<a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/releases/tag/v0.3.0"><code>0.3.0</code></a> version of the
+library. The library version corresponds to commit
+<a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/commit/5436b12f40e3cb5d0f593709067b22054e4164b8">5436b12</a>.</p>
+<h3 id="the-traditional-implementation-"><a class="header" href="#the-traditional-implementation-">The traditional implementation <a href="#1%EF%B8%8F%E2%83%A3-the-traditional-implementation">🔗</a></a></h3>
+<div class="table-wrapper"><table><thead><tr><th></th><th></th><th></th><th></th><th></th></tr></thead><tbody>
+<tr><td>Deployment Cost</td><td>Deployment Size</td><td></td><td></td><td></td></tr>
+<tr><td>978643</td><td>4946</td><td></td><td></td><td></td></tr>
+<tr><td>Function Name</td><td>min</td><td>avg</td><td>median</td><td>max</td></tr>
+<tr><td>verify</td><td>448</td><td>110273</td><td>197391</td><td>212108</td></tr>
+</tbody></table>
+</div>
+<h3 id="the-external-precomputed-points-implementation-"><a class="header" href="#the-external-precomputed-points-implementation-">The external precomputed points implementation <a href="#2%EF%B8%8F%E2%83%A3-the-external-precomputed-points-implementation-recommended">🔗</a></a></h3>
+<div class="table-wrapper"><table><thead><tr><th></th><th></th><th></th><th></th><th></th></tr></thead><tbody>
+<tr><td>Deployment Cost</td><td>Deployment Size</td><td></td><td></td><td></td></tr>
+<tr><td>649708</td><td>3303</td><td></td><td></td><td></td></tr>
+<tr><td>Function Name</td><td>min</td><td>avg</td><td>median</td><td>max</td></tr>
+<tr><td>verify</td><td>472</td><td>44794</td><td>59185</td><td>75396</td></tr>
+</tbody></table>
+</div>
+<p>Although the prerequisites for implementing this approach are more complex, the gas cost for the verification process is
+over three times less expensive than the traditional method.</p>
+<blockquote>
+<p>ℹ️ It's important to note that since 2021, there has been ongoing discussion about a potential yet unplanned overhaul
+of the extcodecopy opcode. If such a revamp occurs, it could result in a significant increase in the gas cost of this
+implementation. This is an issue worth monitoring. You can learn more about the possible revamp in this
+<a href="https://notes.ethereum.org/@vbuterin/witness_gas_cost_2">blog post</a>.</p>
+</blockquote>
+<h3 id="the-external-precomputed-points-implementation--1"><a class="header" href="#the-external-precomputed-points-implementation--1">The external precomputed points implementation <a href="#3%EF%B8%8F%E2%83%A3-the-internal-precomputed-points-implementation-work-in-progress">🔗</a></a></h3>
+<p>As this implementation is still work-in-progress, the benchmark is not yet available.</p>
 <h2 id="contributing"><a class="header" href="#contributing">Contributing</a></h2>
 <p>To contribute to the project, you must have Foundry and Node.js installed on your system. You can download them from
 their official websites:</p>
