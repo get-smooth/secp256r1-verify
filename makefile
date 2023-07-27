@@ -45,6 +45,7 @@ default:
 		  \e[90m$$ \e[0;97;1mmake \e[0;92;1mquality               \e[0;90m➔ \e[32;3mrun both the linter and the formatter in read mode \e[0m\n \
 		  \e[90m$$ \e[0;97;1mmake \e[0;92;1mdoc                   \e[0;90m➔ \e[32;3mgenerate the documentation of the project \e[0m\n \
 		  \e[90m$$ \e[0;97;1mmake \e[0;92;1mtree                  \e[0;90m➔ \e[32;3mdisplay a tree visualization of the project's dependency graph \e[0m\n \
+		  \e[90m$$ \e[0;97;1mmake \e[0;92;1mcompute               \e[0;90m➔ \e[32;3mcompute 256 points on the secp256r1 elliptic curve\e[0m\n \
 	""" | sed -e 's/^[ \t	]\{1,\}\(.\)/  \1/'
 
 
@@ -111,8 +112,8 @@ lefthok-uninstall:
 lint:
 	@runcmd forge fmt --check && npx solhint "{script,src,test}/**/*.sol"
 
-.PHONY: lint-fix
-lint-fix:
+.PHONY: linter-fix
+linter-fix:
 	@runcmd forge fmt && npx solhint "{script,src,test}/**/*.sol" --fix
 
 .PHONY: prettier
@@ -122,6 +123,11 @@ prettier:
 .PHONY: prettier-fix
 prettier-fix:
 	@runcmd npx prettier --write \"**/*.{json,md,yml}\"
+
+# example: `c0=XXX c1=XXX make compute`
+.PHONY: compute-points
+compute-points:
+	@runcmd npx @0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation $(c0) $(c1)
 
 ##########################################
 ################ ALIASES  ################
@@ -146,3 +152,4 @@ format: prettier
 format-fix: prettier-fix
 quality: lint format
 install: install-dependencies lefthok-install
+compute: compute-points
