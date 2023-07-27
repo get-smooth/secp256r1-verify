@@ -85,16 +85,38 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="index.html">Home</a></li><li class="chapter-item affix "><li class="part-title">src</li><li class="chapter-item "><a href="src/utils/index.html">❱ utils</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="src/utils/ECDSA.sol/library.ECDSA.html">ECDSA</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/function.nModInv.html">nModInv</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/function.pModInv.html">pModInv</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/constants.secp256r1.html">secp256r1 constants</a></li></ol></li><li class="chapter-item "><a href="src/ECDSA256PrecomputeInternal.sol/library.ECDSA256r1PrecomputeInternal.html">ECDSA256r1PrecomputeInternal</a></li><li class="chapter-item "><a href="src/ECDSA256r1.sol/library.ECDSA256r1.html">ECDSA256r1</a></li><li class="chapter-item "><a href="src/ECDSA256r1Precompute.sol/library.ECDSA256r1Precompute.html">ECDSA256r1Precompute</a></li></ol>
+                <ol class="chapter"><li class="chapter-item "><a href="index.html">Home</a></li><li class="chapter-item affix "><li class="part-title">src</li><li class="chapter-item "><a href="src/utils/index.html">❱ utils</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="src/utils/ECDSA.sol/library.ECDSA.html">ECDSA</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/function.pModInv.html">pModInv</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/function.nModInv.html">nModInv</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/constants.secp256r1.html">secp256r1 constants</a></li></ol></li><li class="chapter-item "><a href="src/ECDSA256PrecomputeInternal.sol/library.ECDSA256r1PrecomputeInternal.html">ECDSA256r1PrecomputeInternal</a></li><li class="chapter-item "><a href="src/ECDSA256r1.sol/library.ECDSA256r1.html">ECDSA256r1</a></li><li class="chapter-item "><a href="src/ECDSA256r1Precompute.sol/library.ECDSA256r1Precompute.html">ECDSA256r1Precompute</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -277,6 +299,10 @@ table deployment. Meanwhile, if you want to precompute the points off-chain your
 <a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation">library</a> developed by us for this
 purpose.</p>
 </blockquote>
+<h3 id="scripts"><a class="header" href="#scripts">Scripts</a></h3>
+<p>This repository includes a <a href="./script">script</a> directory containing a set of scripts that can be used to deploy the
+different implementations on-chain. Each script contains a set of instructions and an example of how to use it. The
+scripts are expected to be run using the <code>forge script</code> command.</p>
 <h2 id="gas-reports"><a class="header" href="#gas-reports">Gas reports</a></h2>
 <p>These gas reports were produced using the <code>0.8.19</code> version of the Solidity compiler, specifically for the
 <a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/releases/tag/v0.3.0"><code>0.3.0</code></a> version of the
@@ -454,12 +480,12 @@ him.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="contents"><a class="header" href="#contents">Contents</a></h1>
 <ul>
 <li><a href="src/utils/ECDSA.sol/library.ECDSA.html">ECDSA</a></li>
-<li><a href="src/utils/secp256r1.sol/function.nModInv.html">nModInv</a></li>
 <li><a href="src/utils/secp256r1.sol/function.pModInv.html">pModInv</a></li>
+<li><a href="src/utils/secp256r1.sol/function.nModInv.html">nModInv</a></li>
 <li><a href="src/utils/secp256r1.sol/constants.secp256r1.html">secp256r1 constants</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa"><a class="header" href="#ecdsa">ECDSA</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/97750d62d99c73f76f36a5f021ffe7d3a248fdbd/src/utils/ECDSA.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/482ce7b8d2ecafb50a8b19cd58aae56b392f50de/src/utils/ECDSA.sol">Git Source</a></p>
 <p>Library for handling Elliptic Curve Digital Signature Algorithm (ECDSA) operations on a compatible curve</p>
 <h2 id="functions"><a class="header" href="#functions">Functions</a></h2>
 <h3 id="zz2aff"><a class="header" href="#zz2aff">zz2Aff</a></h3>
@@ -575,23 +601,8 @@ https://hyperelliptic.org/EFD/g1p/auto-shortw-xyzz-3.html#addition-add-2008-s*</
 <tr><td><code>x2</code></td><td><code>uint256</code></td><td>The X-coordinate of the resulting point</td></tr>
 <tr><td><code>y2</code></td><td><code>uint256</code></td><td>The Y-coordinate of the resulting point</td></tr>
 </tbody></table>
-</div><div style="break-before: page; page-break-before: always;"></div><h1 id="nmodinv"><a class="header" href="#nmodinv">nModInv</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/97750d62d99c73f76f36a5f021ffe7d3a248fdbd/src/utils/secp256r1.sol">Git Source</a></p>
-<p>Calculate the modular inverse of a given integer, which is the inverse of this integer modulo n.</p>
-<p><em>Uses the ModExp precompiled contract at address 0x05 for fast computation using little Fermat theorem</em></p>
-<pre><code class="language-solidity">function nModInv(uint256 self) returns (uint256 result);
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>self</code></td><td><code>uint256</code></td><td>The integer of which to find the modular inverse</td></tr>
-</tbody></table>
-</div>
-<p><strong>Returns</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>result</code></td><td><code>uint256</code></td><td>The modular inverse of the input integer. If the modular inverse doesn't exist, it revert the tx</td></tr>
-</tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="pmodinv"><a class="header" href="#pmodinv">pModInv</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/97750d62d99c73f76f36a5f021ffe7d3a248fdbd/src/utils/secp256r1.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/482ce7b8d2ecafb50a8b19cd58aae56b392f50de/src/utils/secp256r1.sol">Git Source</a></p>
 <p>Calculate the modular inverse of a given integer, which is the inverse of this integer modulo p.</p>
 <p><em>Uses the ModExp precompiled contract at address 0x05 for fast computation using little Fermat theorem</em></p>
 <pre><code class="language-solidity">function pModInv(uint256 self) returns (uint256 result);
@@ -605,8 +616,23 @@ https://hyperelliptic.org/EFD/g1p/auto-shortw-xyzz-3.html#addition-add-2008-s*</
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>result</code></td><td><code>uint256</code></td><td>The modular inverse of the input integer. If the modular inverse doesn't exist, it revert the tx</td></tr>
 </tbody></table>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="nmodinv"><a class="header" href="#nmodinv">nModInv</a></h1>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/482ce7b8d2ecafb50a8b19cd58aae56b392f50de/src/utils/secp256r1.sol">Git Source</a></p>
+<p>Calculate the modular inverse of a given integer, which is the inverse of this integer modulo n.</p>
+<p><em>Uses the ModExp precompiled contract at address 0x05 for fast computation using little Fermat theorem</em></p>
+<pre><code class="language-solidity">function nModInv(uint256 self) returns (uint256 result);
+</code></pre>
+<p><strong>Parameters</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>self</code></td><td><code>uint256</code></td><td>The integer of which to find the modular inverse</td></tr>
+</tbody></table>
+</div>
+<p><strong>Returns</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>result</code></td><td><code>uint256</code></td><td>The modular inverse of the input integer. If the modular inverse doesn't exist, it revert the tx</td></tr>
+</tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="constants"><a class="header" href="#constants">Constants</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/97750d62d99c73f76f36a5f021ffe7d3a248fdbd/src/utils/secp256r1.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/482ce7b8d2ecafb50a8b19cd58aae56b392f50de/src/utils/secp256r1.sol">Git Source</a></p>
 <h3 id="p"><a class="header" href="#p">p</a></h3>
 <pre><code class="language-solidity">uint256 constant p = 0xFFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF;
 </code></pre>
@@ -638,7 +664,7 @@ https://hyperelliptic.org/EFD/g1p/auto-shortw-xyzz-3.html#addition-add-2008-s*</
 <pre><code class="language-solidity">address constant MODEXP_PRECOMPILE = 0x0000000000000000000000000000000000000005;
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa256r1precomputeinternal"><a class="header" href="#ecdsa256r1precomputeinternal">ECDSA256r1PrecomputeInternal</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/97750d62d99c73f76f36a5f021ffe7d3a248fdbd/src/ECDSA256PrecomputeInternal.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/482ce7b8d2ecafb50a8b19cd58aae56b392f50de/src/ECDSA256PrecomputeInternal.sol">Git Source</a></p>
 <p>This library is for ECDSA verification using a precomputed table of multiples of P and Q. The Shamir's
 Secret Sharing scheme is used in 8 dimensions. The precomputed table must be stored <strong>in</strong> the bytecode of
 the contract calling the verify function of this library (using delegatecall as it's automatically done in
@@ -681,7 +707,7 @@ that uses this library.</p>
 <p>Verifies an ECDSA signature using a precomputed table of multiples of P and Q stored in the bytecode of
 the contrat that uses this library</p>
 <p><em>Note the required interactions with the precompled contract can revert the transaction</em></p>
-<pre><code class="language-solidity">function verify(bytes32 message, uint256 r, uint256 s, uint256 precomputedOffset) external returns (bool);
+<pre><code class="language-solidity">function verify(bytes32 message, uint256 r, uint256 s, uint256 precomputedOffset) internal returns (bool);
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
@@ -696,7 +722,7 @@ the contrat that uses this library</p>
 <tr><td><code>&lt;none&gt;</code></td><td><code>bool</code></td><td>True if the signature is valid, false otherwise.</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa256r1"><a class="header" href="#ecdsa256r1">ECDSA256r1</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/97750d62d99c73f76f36a5f021ffe7d3a248fdbd/src/ECDSA256r1.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/482ce7b8d2ecafb50a8b19cd58aae56b392f50de/src/ECDSA256r1.sol">Git Source</a></p>
 <p>A library to verify ECDSA signatures made on the secp256r1 curve</p>
 <p><em>This is the easiest library to deal with but also the most expensive in terms of gas cost. Indeed, this library
 must calculate multiple points on the curve in order to verify the signature. Use it kmowingly.</em></p>
@@ -722,7 +748,7 @@ must calculate multiple points on the curve in order to verify the signature. Us
 <p>Verifies an ECDSA signature on the secp256r1 curve given the message, signature, and public key.
 This function is the only one exposed by the library</p>
 <p><em>Note the required interactions with the precompled contract can revert the transaction</em></p>
-<pre><code class="language-solidity">function verify(bytes32 message, uint256 r, uint256 s, uint256 qx, uint256 qy) external returns (bool);
+<pre><code class="language-solidity">function verify(bytes32 message, uint256 r, uint256 s, uint256 qx, uint256 qy) internal returns (bool);
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
@@ -738,7 +764,7 @@ This function is the only one exposed by the library</p>
 <tr><td><code>&lt;none&gt;</code></td><td><code>bool</code></td><td>bool True if the signature is valid, false otherwise</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa256r1precompute"><a class="header" href="#ecdsa256r1precompute">ECDSA256r1Precompute</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/97750d62d99c73f76f36a5f021ffe7d3a248fdbd/src/ECDSA256r1Precompute.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/482ce7b8d2ecafb50a8b19cd58aae56b392f50de/src/ECDSA256r1Precompute.sol">Git Source</a></p>
 <p>This library is for ECDSA verification using a precomputed shamir table of 256 points. The Shamir's
 Secret Sharing scheme is used in 8 dimensions. The precomputed table must be stored in an external contract
 upstream.</p>
@@ -773,7 +799,7 @@ contract at the given precomputedTable address</p>
 <p>Verifies an ECDSA signature using a precomputed table of multiples of P and Q stored in an external
 contract</p>
 <p><em>Note the required interactions with the precompled contract can revert the transaction</em></p>
-<pre><code class="language-solidity">function verify(bytes32 message, uint256 r, uint256 s, address precomputedTable) external returns (bool);
+<pre><code class="language-solidity">function verify(bytes32 message, uint256 r, uint256 s, address precomputedTable) internal returns (bool);
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>

@@ -85,16 +85,38 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="index.html">Home</a></li><li class="chapter-item affix "><li class="part-title">src</li><li class="chapter-item "><a href="src/utils/index.html">❱ utils</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="src/utils/ECDSA.sol/library.ECDSA.html">ECDSA</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/function.nModInv.html">nModInv</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/function.pModInv.html">pModInv</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/constants.secp256r1.html">secp256r1 constants</a></li></ol></li><li class="chapter-item "><a href="src/ECDSA256PrecomputeInternal.sol/library.ECDSA256r1PrecomputeInternal.html">ECDSA256r1PrecomputeInternal</a></li><li class="chapter-item "><a href="src/ECDSA256r1.sol/library.ECDSA256r1.html">ECDSA256r1</a></li><li class="chapter-item "><a href="src/ECDSA256r1Precompute.sol/library.ECDSA256r1Precompute.html">ECDSA256r1Precompute</a></li></ol>
+                <ol class="chapter"><li class="chapter-item "><a href="index.html">Home</a></li><li class="chapter-item affix "><li class="part-title">src</li><li class="chapter-item "><a href="src/utils/index.html">❱ utils</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="src/utils/ECDSA.sol/library.ECDSA.html">ECDSA</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/function.pModInv.html">pModInv</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/function.nModInv.html">nModInv</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/constants.secp256r1.html">secp256r1 constants</a></li></ol></li><li class="chapter-item "><a href="src/ECDSA256PrecomputeInternal.sol/library.ECDSA256r1PrecomputeInternal.html">ECDSA256r1PrecomputeInternal</a></li><li class="chapter-item "><a href="src/ECDSA256r1.sol/library.ECDSA256r1.html">ECDSA256r1</a></li><li class="chapter-item "><a href="src/ECDSA256r1Precompute.sol/library.ECDSA256r1Precompute.html">ECDSA256r1Precompute</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
