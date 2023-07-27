@@ -152,6 +152,12 @@ before considering this approach.
 > [library](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation) developed by us for this
 > purpose.
 
+### Scripts
+
+This repository includes a [script](./script) directory containing a set of scripts that can be used to deploy the
+different implementations on-chain. Each script contains a set of instructions and an example of how to use it. The
+scripts are expected to be run using the `forge script` command.
+
 ## Gas reports
 
 These gas reports were produced using the `0.8.19` version of the Solidity compiler, specifically for the
