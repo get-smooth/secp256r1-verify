@@ -24,10 +24,6 @@ remappings = [
     "@prb-test/=lib/prb-test/src/",
 ]
 extra_output_files = ["metadata", "ir", "evm.assembly"]
-gas_reports_ignore = [
-    "ImplementationECDSA256r1",
-    "ImplementationECDSA256r1Precompute",
-]
 
 [profile.ci]
 fuzz = { runs = 10_000 }

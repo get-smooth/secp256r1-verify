@@ -198,7 +198,7 @@ library ECDSA256r1 {
     /// @param qy The y value of the public key used for the signature
     /// @return bool True if the signature is valid, false otherwise
     /// @dev Note the required interactions with the precompled contract can revert the transaction
-    function verify(bytes32 message, uint256 r, uint256 s, uint256 qx, uint256 qy) external returns (bool) {
+    function verify(bytes32 message, uint256 r, uint256 s, uint256 qx, uint256 qy) internal returns (bool) {
         // check the validity of the signature
         if (r == 0 || r >= n || s == 0 || s >= n) {
             return false;

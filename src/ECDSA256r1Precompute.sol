@@ -188,7 +188,7 @@ library ECDSA256r1Precompute {
     ///        to be functional.
     /// @return True if the signature is valid, false otherwise.
     /// @dev Note the required interactions with the precompled contract can revert the transaction
-    function verify(bytes32 message, uint256 r, uint256 s, address precomputedTable) external returns (bool) {
+    function verify(bytes32 message, uint256 r, uint256 s, address precomputedTable) internal returns (bool) {
         // check the validity of the signature
         if (r == 0 || r >= n || s == 0 || s >= n) {
             return false;
