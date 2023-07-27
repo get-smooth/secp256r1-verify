@@ -14,13 +14,7 @@ runcmd() {
 			cmd_output=$(eval "$script_cmd" | tee /dev/tty; exit ${PIPESTATUS[0]}); cmd_exit_code=$?; \
 			[ -z "$cmd_output" ] || ([ -z "$(tr -d '[:space:]' <<< $cmd_output)" ] && printf "\e[1A"); \
 			[[ "$cmd_exit_code" -eq 0 ]] || return $cmd_exit_code \
-		) \
-		&& printf "\e[032;1m[✔︎] success\e[0m\n\n" \
-			|| (_test_exit=$? \
-				&& printf "\e[031;1m[✖︎] fail (exit code: $_test_exit)\e[0m\n\n" \
-				&& return $_test_exit) \
-			&& [ $? -eq 0 ] \
-				|| return $?
+		) || (_test_exit=$? && return $_test_exit) && [ $? -eq 0 ] || return $?
 }
 : END
 endef
@@ -45,7 +39,7 @@ default:
 		  \e[90m$$ \e[0;97;1mmake \e[0;92;1mhooks-i               \e[0;90m➔ \e[32;3minstall the git hooks defined in lefthook.yml \e[0m\n \
 		  \e[90m$$ \e[0;97;1mmake \e[0;92;1mhooks-u               \e[0;90m➔ \e[32;3muninstall the git hooks defined in lefthook.yml \e[0m\n \
 		  \e[90m$$ \e[0;97;1mmake \e[0;92;1mlint                  \e[0;90m➔ \e[32;3mrun the linter in check mode \e[0m\n \
-		  \e[90m$$ \e[0;97;1mmake \e[0;92;1mlint-fix              \e[0;90m➔ \e[32;3mrun the linter in write mode \e[0m\n \
+		  \e[90m$$ \e[0;97;1mmake \e[0;92;1mlinter-fix              \e[0;90m➔ \e[32;3mrun the linter in write mode \e[0m\n \
 		  \e[90m$$ \e[0;97;1mmake \e[0;92;1mprettier              \e[0;90m➔ \e[32;3mrun the formatter in read mode \e[0m\n \
 		  \e[90m$$ \e[0;97;1mmake \e[0;92;1mprettier-fix          \e[0;90m➔ \e[32;3mrun the formatter in write mode \e[0m\n \
 		  \e[90m$$ \e[0;97;1mmake \e[0;92;1mquality               \e[0;90m➔ \e[32;3mrun both the linter and the formatter in read mode \e[0m\n \
@@ -147,7 +141,7 @@ hooks: lefthok-run
 hooks-i: lefthok-install
 hooks-u: lefthok-uninstall
 lint: lint
-lint-fix: lint-fix
+lint-fix: linter-fix
 format: prettier
 format-fix: prettier-fix
 quality: lint format
