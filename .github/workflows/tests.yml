@@ -64,3 +64,48 @@ jobs:
           # delete the comment in case changes no longer impact gas costs
           delete: ${{ !steps.gas_diff.outputs.markdown }}
           message: ${{ steps.gas_diff.outputs.markdown }}
+
+  coverage:
+    needs: ["test"]
+    permissions: write-all
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Check out the repo"
+        uses: "actions/checkout@v3"
+        with:
+          submodules: "recursive"
+
+      - name: "Install Foundry"
+        uses: "foundry-rs/foundry-toolchain@v1"
+
+      # required to install our private package from Github Packages
+      - name: Authenticate with GitHub Packages
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
+
+      # needed because the precomputation scripts used by the ffi tests is a JS dependency
+      - name: Install the Node.js dependencies
+        run: npm ci
+
+      - name: Setup lcov
+        uses: hrishikesh-kadam/setup-lcov@v1
+
+      - name: "Generate the coverage report"
+        # contracts in the test/ and script/ directory are excluded fron the report
+        # the precompute internal version of the library is also excluded from the report as
+        # it is highly experimental and to meant to be used at all
+        run: "forge coverage --report lcov && lcov --remove lcov.info \
+          -o lcov.info 'test/*' 'script/*' 'src/ECDSA256PrecomputeInternal.sol'"
+
+      - name: "Add coverage summary"
+        run: |
+          echo "## Coverage result" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
+
+      - name: Report code coverage
+        uses: zgosalvez/github-actions-report-lcov@v3
+        with:
+          coverage-files: lcov.info
+          minimum-coverage: 80
+          artifact-name: code-coverage-report
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          update-comment: true

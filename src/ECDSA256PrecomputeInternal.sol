@@ -3,6 +3,8 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import { Curve, p, n, MINUS_2, MODEXP_PRECOMPILE } from "./utils/ECDSA.sol";
 
+// >>>>>>>>>>>>>>>>>>>>>>> DO NOT USE ME!!!!!!! <<<<<<<<<<<<<<<<<<<<<<<
+
 /// @title ECDSA256r1PrecomputeInternal
 /// @notice This library is for ECDSA verification using a precomputed table of multiples of P and Q. The Shamir's
 ///         Secret Sharing scheme is used in 8 dimensions. The precomputed table must be stored **in** the bytecode of

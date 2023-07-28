@@ -36,3 +36,5 @@ docs
 gasreport.ansi
 .gas-snapshot*
 
+# coverage output
+coverage
