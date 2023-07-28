@@ -76,7 +76,6 @@ contract ECDSATest is StdUtils, PRBTest {
         assertEq(y1, 0);
     }
 
-    // TODO: Test the assembly branch of the `zzAddN` function
     function test_zzAddNZero() external {
         zzPoint memory point1 = zzPoint(0x1, 0x00, 0x3, 0x4);
         Point memory point2 = Point(0x5, 0x6);
@@ -88,6 +87,21 @@ contract ECDSATest is StdUtils, PRBTest {
         assertEq(y, point2.y);
         assertEq(zz, 1);
         assertEq(zzz, 1);
+    }
+
+    // TODO: This test is shit, it's a horrible regression test. Rework it using fuzzing
+    //       for testing the assembly block of the `zzAddN` function
+    function test_zzAddN() external {
+        zzPoint memory point1 = zzPoint(0x1, 0x06, 0x3, 0x4);
+        Point memory point2 = Point(0x5, 0x99);
+
+        (uint256 x, uint256 y, uint256 zz, uint256 zzz) =
+            implementation.zzAddN(point1.x, point1.y, point1.zz, point1.zzz, point2.x, point2.y);
+
+        assertEq(x, 364_100);
+        assertEq(y, 0xffffffff00000001000000000000000000000000fffffffffffffffff2dacaaf);
+        assertEq(zz, 588);
+        assertEq(zzz, 10_976);
     }
 
     // TODO: Test the assembly branch of the `zzDouble` function (for real)
