@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.19 <0.9.0;
 
-import "./BaseScript.sol";
+import { BaseScript } from "./BaseScript.sol";
 import { ECDSA256r1 } from "src/ECDSA256r1.sol";
 
 contract LibraryWrapper {
