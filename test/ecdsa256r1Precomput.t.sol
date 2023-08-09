@@ -167,7 +167,7 @@ contract Ecdsa256r1PrecomputTest is StdUtils, PRBTest {
 
     /// @notice Test function for verifying invalid vectors
     /// @dev Ensures that all the invalid test vectors are not working
-    function test_VerifyInvalidVectorsIncorrect() external _preparePrecomputeTable {
+    function test_VerifyInvalidVectorsIncorrect_ReportSkip() external _preparePrecomputeTable {
         // load the wycheproof test vectors
         TestVectors memory testVectors = invalidVectors;
 
@@ -183,7 +183,7 @@ contract Ecdsa256r1PrecomputTest is StdUtils, PRBTest {
 
     /// @notice Test function for verifying incorrect signatures
     /// @dev Ensures that incorrect signatures are not valid
-    function test_VerifyIncorrectSignatureFail() external _preparePrecomputeTable {
+    function test_VerifyIncorrectSignatureFail_ReportSkip() external _preparePrecomputeTable {
         // expect to fail because rs[0] == 0
         bool isValid = implementation.verify(bytes32("hello"), uint256(0), uint256(1), precomputeAddress);
         assertFalse(isValid);
@@ -211,7 +211,7 @@ contract Ecdsa256r1PrecomputTest is StdUtils, PRBTest {
 
     /// @notice Test function for verifying incorrect addresses
     /// @dev Ensures that incorrect addresses fail verification (0x00 + precompile addresses + some extra empty ones)
-    function test_VerifyIncorectAddressesFail() external _preparePrecomputeTable {
+    function test_VerifyIncorectAddressesFail_ReportSkip() external _preparePrecomputeTable {
         // get a valid test vector (message, signature)
         (uint256 r, uint256 s, bytes32 message) = _getTestVector(validVectors.fixtures, "1");
 

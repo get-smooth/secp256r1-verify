@@ -120,7 +120,7 @@ contract Ecdsa256r1Test is PRBTest {
         assertEq(_4P_res1, _4P_res3);
     }
 
-    function test_MulMullAddMultipleBy0Fail(uint256 q0, uint256 q1) public {
+    function test_MulMullAddMultipleBy0Fail_ReportSkip(uint256 q0, uint256 q1) public {
         uint256 res = implementation.mulmuladd(q0, q1, 0, 0);
         assertEq(res, 0);
     }
@@ -131,12 +131,12 @@ contract Ecdsa256r1Test is PRBTest {
     }
 
     // test invalid vectors, all assert shall be false
-    function test_VerifyInvalidVectorsIncorrect() public {
+    function test_VerifyInvalidVectorsIncorrect_ReportSkip() public {
         _validateInvariantEcMulMulAdd(false);
     }
 
     // test invalid vectors, all assert shall be false
-    function test_VerifySignatureValidity() public {
+    function test_VerifySignatureValidity_ReportSkip() public {
         // expect to fail because rs[0] == 0
         bool isValid = implementation.verify(bytes32("hello"), uint256(0), uint256(1), uint256(1), uint256(1));
         assertFalse(isValid);

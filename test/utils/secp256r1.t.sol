@@ -32,7 +32,7 @@ contract Secp256r1Test is StdUtils, PRBTest {
      * inverse is equal to 1 mod n.
      */
     /// @param valueToInvert The value to invert.
-    function test_Fuzz_InVmodn(uint256 valueToInvert) public {
+    function testFuzz_InVmodn(uint256 valueToInvert) public {
         // bound the fuzzed value between 1 and n-1
         valueToInvert = bound(valueToInvert, 1, n - 1);
 
@@ -47,7 +47,7 @@ contract Secp256r1Test is StdUtils, PRBTest {
      * inverse is equal to 1 mod p.
      */
     /// @param valueToInvert The value to invert.
-    function test_Fuzz_InVmodp(uint256 valueToInvert) public {
+    function testFuzz_InVmodp(uint256 valueToInvert) public {
         // bound the fuzzed value between 1 and p-1
         valueToInvert = bound(valueToInvert, 1, p - 1);
 

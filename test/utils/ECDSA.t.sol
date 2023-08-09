@@ -114,7 +114,7 @@ contract ECDSATest is StdUtils, PRBTest {
     }
 
     // TODO: Test the unchecked branch of the `affIsOnCurve` function
-    function test_affIsOnCurveInvalidPoints() external {
+    function test_affIsOnCurveInvalidPoints_ReportSkip() external {
         // expect to fail because x == 0
         bool isOnCurve = implementation.affIsOnCurve(0, 2);
         assertFalse(isOnCurve);

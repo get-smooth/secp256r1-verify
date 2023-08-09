@@ -74,7 +74,9 @@ forge-coverage:
 
 .PHONY: forge-test-gas
 forge-test-gas:
-	@runcmd forge test --gas-report
+	@runcmd forge test --gas-report --no-match-test "test.*_ReportSkip|test_RevertWhen|testFuzz_RevertWhen"
+# the regexp catches the tests that start with `testFuzz_RevertWhen`, `test_RevertWhen` or end with `_ReportSkip`
+# stick to this convention to avoid running the gas report on tests that are not meant to be run
 
 .PHONY: forge-clean
 clean:
