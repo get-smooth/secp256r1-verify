@@ -1,10 +1,33 @@
 # secp256r1 verify
 
-[![quality workflow](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/quality-checks.yml/badge.svg?branch=main)](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/quality-checks.yml)
-[![test workflow](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/tests.yml)
-[![release workflow](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/release-package.yml/badge.svg)](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/release-package.yml)
-[![static analysis workflow](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/static-analysis.yml/badge.svg?branch=main)](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/static-analysis.yml)
-[![documentation](https://img.shields.io/badge/documentation-here-purple)](https://0x90d2b2b7fb7599eebb6e7a32980857d8.github.io/secp256r1-verify/)
+[![Open in Github][github-editor-badge]][github-editor-url] [![Github Actions][gha-quality-badge]][gha-quality-url]
+[![Github Actions][gha-test-badge]][gha-test-url]
+[![Github Actions][gha-static-analysis-badge]][gha-static-analysis-url]
+[![Github Actions][gha-release-badge]][gha-release-url] [![Foundry][foundry-badge]][foundry]
+[![License: MIT][license-badge]][license] ![Is it audited?][audit]
+
+[github-editor-url]: https://github.dev/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/tree/main
+[github-editor-badge]: https://img.shields.io/badge/Github-Open%20the%20Editor-purple?logo=github
+[gha-quality-url]:
+  https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/quality-checks.yml
+[gha-quality-badge]:
+  https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/quality-checks.yml/badge.svg?branch=main
+[gha-test-url]: https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/tests.yml
+[gha-test-badge]:
+  https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/tests.yml/badge.svg?branch=main
+[gha-static-analysis-url]:
+  https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/static-analysis.yml
+[gha-static-analysis-badge]:
+  https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/template-foundry/actions/workflows/static-analysis.yml/badge.svg?branch=main
+[gha-release-url]:
+  https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/release-package.yml
+[gha-release-badge]:
+  https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/release-package.yml/badge.svg
+[foundry]: https://book.getfoundry.sh/
+[foundry-badge]: https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg
+[license]: ./LICENSE.md
+[license-badge]: https://img.shields.io/badge/License-MIT-blue.svg
+[audit]: https://img.shields.io/badge/Audited-No-red.svg
 
 ## Description
 
