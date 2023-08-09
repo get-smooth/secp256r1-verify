@@ -187,7 +187,7 @@ These gas reports were produced using the `0.8.19` version of the Solidity compi
 specifically for the
 [`0.3.1`](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/releases/tag/v0.3.1) version of the
 library. The library version corresponds to commit
-[5436b12](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/commit/5436b12f40e3cb5d0f593709067b22054e4164b8).
+[4d0716f](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/commit/4d0716fc6fd14a92488442e1dd0c18bb2c24ff41).
 
 > ℹ️ If you import the library into your project, we strongly recommend you to enable the optimizer with 100k in order
 > to have the best gas consumption.
