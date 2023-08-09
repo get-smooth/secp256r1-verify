@@ -183,28 +183,30 @@ scripts are expected to be run using the `forge script` command.
 
 ## Gas reports
 
-These gas reports were produced using the `0.8.19` version of the Solidity compiler, specifically for the
-[`0.3.0`](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/releases/tag/v0.3.0) version of the
+These gas reports were produced using the `0.8.19` version of the Solidity compiler (with 100k optimizer runs),
+specifically for the
+[`0.3.1`](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/releases/tag/v0.3.1) version of the
 library. The library version corresponds to commit
 [5436b12](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/commit/5436b12f40e3cb5d0f593709067b22054e4164b8).
 
+> ℹ️ If you import the library into your project, we strongly recommend you to enable the optimizer with 100k in order
+> to have the best gas consumption.
+
 ### The traditional implementation [🔗](#1️⃣-the-traditional-implementation)
 
-|                 |                 |        |        |        |
-| --------------- | --------------- | ------ | ------ | ------ |
 | Deployment Cost | Deployment Size |        |        |        |
-| 978643          | 4946            |        |        |        |
+| --------------- | --------------- | ------ | ------ | ------ |
+| 1002641         | 5040            |        |        |        |
 | Function Name   | min             | avg    | median | max    |
-| verify          | 448             | 110273 | 197391 | 212108 |
+| verify          | 192620          | 202959 | 202905 | 210079 |
 
 ### The external precomputed points implementation [🔗](#2️⃣-the-external-precomputed-points-implementation-recommended)
 
-|                 |                 |       |        |       |
-| --------------- | --------------- | ----- | ------ | ----- |
 | Deployment Cost | Deployment Size |       |        |       |
-| 649708          | 3303            |       |        |       |
+| --------------- | --------------- | ----- | ------ | ----- |
+| 675908          | 3408            |       |        |       |
 | Function Name   | min             | avg   | median | max   |
-| verify          | 472             | 44794 | 59185  | 75396 |
+| verify          | 74589           | 75378 | 75507  | 75507 |
 
 Although the prerequisites for implementing this approach are more complex, the gas cost for the verification process is
 over three times less expensive than the traditional method.
