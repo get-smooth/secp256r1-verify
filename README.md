@@ -185,7 +185,7 @@ scripts are expected to be run using the `forge script` command.
 
 These gas reports were produced using the `0.8.19` version of the Solidity compiler (with 100k optimizer runs),
 specifically for the
-[`0.3.1`](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/releases/tag/v0.3.1) version of the
+[`0.4.1`](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/releases/tag/v0.4.1) version of the
 library. The library version corresponds to commit
 [4d0716f](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/commit/4d0716fc6fd14a92488442e1dd0c18bb2c24ff41).
 
