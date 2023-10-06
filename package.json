@@ -1,7 +1,7 @@
 {
   "name": "@0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify",
   "description": "A solidity library to verify a secp256r1 signature",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "contributors": [
     {
       "name": "qd-qd",
