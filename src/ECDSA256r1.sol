@@ -129,7 +129,8 @@ library ECDSA256r1 {
                                 T2 := mulmod(T1, T1, p)
                                 // S = X1*V
                                 T3 := mulmod(X, T2, p)
-
+                                // W=UV
+                                T1 := mulmod(T1, T2, p)
                                 y2 := addmod(X, zz, p)
                                 let TT1 := addmod(X, sub(p, zz), p)
                                 // X-ZZ)(X+ZZ)
