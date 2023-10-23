@@ -41,7 +41,43 @@ jobs:
       - name: Install the Node.js dependencies
         run: npm ci
 
+      - name: Run tests
+        run: forge test
+
+  gas-report:
+    needs: ["test"]
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Show the Foundry config
+        run: forge config
+
+      - name: Generate a fuzz seed that changes weekly to avoid burning through RPC allowance
+        run: >
+          echo "FOUNDRY_FUZZ_SEED=$(
+            echo $(($EPOCHSECONDS - $EPOCHSECONDS % 604800))
+          )" >> $GITHUB_ENV
+
+      # required to install our private package from Github Packages
+      - name: Authenticate with GitHub Packages
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
+
+      # needed because the precomputation scripts used by the ffi tests is a JS dependency
+      - name: Install the Node.js dependencies
+        run: npm ci
+
       # TODO: Rework the job to correctly print the output of the test command
+      # TODO: Use the "ignore" options of this job instead of rerunning the tests. Update the test command
+      #       in the first step to generate the gas-report file for all the test cases, the ignore options
+      #       will then be used to ignore the test cases that are not relevant for gas reporting.
       - name: Run tests with gas reporting
         run:
           forge test --gas-report --no-match-test "test.*_ReportSkip|test_RevertWhen|testFuzz_RevertWhen" >
