@@ -26,7 +26,6 @@ remappings = [
 extra_output_files = ["metadata", "ir", "evm.assembly"]
 
 [profile.ci]
-fuzz = { runs = 10_000 }
 verbosity = 4
 
 [etherscan]

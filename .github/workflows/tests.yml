@@ -1,5 +1,6 @@
 name: Tests
 
+# Use Foundry's CI profile
 env:
   FOUNDRY_PROFILE: "ci"
 
@@ -12,7 +13,39 @@ on:
       - main
 
 jobs:
+  build:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Check out the repo"
+        uses: "actions/checkout@v3"
+        with:
+          submodules: "recursive"
+
+      - name: "Install Foundry"
+        uses: "foundry-rs/foundry-toolchain@v1"
+
+      - name: "Show the Foundry config"
+        run: "forge config"
+
+      - name: "Build the contracts"
+        run: "forge build"
+
+      - name: "Cache the build so that it can be re-used by the other jobs"
+        uses: "actions/cache/save@v3"
+        with:
+          key: "foundry-build-${{ github.sha }}"
+          path: |
+            cache
+            out
+            out-optimized
+
+      - name: "Add build summary"
+        run: |
+          echo "## Build result" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
+
   test:
+    needs: ["build"]
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
@@ -24,8 +57,15 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Show the Foundry config
-        run: forge config
+      - name: "Restore the cached build"
+        uses: "actions/cache/restore@v3"
+        with:
+          fail-on-cache-miss: true
+          key: "foundry-build-${{ github.sha }}"
+          path: |
+            cache
+            out
+            out-optimized
 
       - name: Generate a fuzz seed that changes weekly to avoid burning through RPC allowance
         run: >
@@ -57,8 +97,15 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Show the Foundry config
-        run: forge config
+      - name: "Restore the cached build"
+        uses: "actions/cache/restore@v3"
+        with:
+          fail-on-cache-miss: true
+          key: "foundry-build-${{ github.sha }}"
+          path: |
+            cache
+            out
+            out-optimized
 
       - name: Generate a fuzz seed that changes weekly to avoid burning through RPC allowance
         run: >
@@ -75,9 +122,6 @@ jobs:
         run: npm ci
 
       # TODO: Rework the job to correctly print the output of the test command
-      # TODO: Use the "ignore" options of this job instead of rerunning the tests. Update the test command
-      #       in the first step to generate the gas-report file for all the test cases, the ignore options
-      #       will then be used to ignore the test cases that are not relevant for gas reporting.
       - name: Run tests with gas reporting
         run:
           forge test --gas-report --no-match-test "test.*_ReportSkip|test_RevertWhen|testFuzz_RevertWhen" >
@@ -115,6 +159,16 @@ jobs:
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
+
+      - name: "Restore the cached build"
+        uses: "actions/cache/restore@v3"
+        with:
+          fail-on-cache-miss: true
+          key: "foundry-build-${{ github.sha }}"
+          path: |
+            cache
+            out
+            out-optimized
 
       # required to install our private package from Github Packages
       - name: Authenticate with GitHub Packages
