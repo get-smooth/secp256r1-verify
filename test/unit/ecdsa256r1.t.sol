@@ -1,19 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.19 <0.9.0;
 
-import { PRBTest } from "../lib/prb-test/src/PRBTest.sol";
-import { ECDSA, p, gx, gy, n } from "../src/utils/ECDSA.sol";
-import { ECDSA256r1 } from "../src/ECDSA256r1.sol";
-
-struct TestVectors {
-    // public key
-    uint256 qx;
-    uint256 qy;
-    // number of tests
-    uint256 numtests;
-    // JSON string containing the test vectors
-    string fixtures;
-}
+import { PRBTest } from "../../lib/prb-test/src/PRBTest.sol";
+import { ECDSA, p, gx, gy, n } from "../../src/utils/ECDSA.sol";
+import { ECDSA256r1 } from "../../src/ECDSA256r1.sol";
+import { stdJson } from "../../lib/forge-std/src/StdJson.sol";
 
 contract ImplementationECDSA256r1 {
     function verify(bytes32 message, uint256 r, uint256 s, uint256 qx, uint256 qy) external returns (bool) {
@@ -26,18 +17,36 @@ contract ImplementationECDSA256r1 {
 }
 
 contract Ecdsa256r1Test is PRBTest {
-    TestVectors private $validVectors;
-    TestVectors private $invalidVectors;
+    using stdJson for string;
+
+    // describe one test vector
+    struct Vector {
+        bytes32 hash;
+        bytes32 r;
+        bytes32 s;
+        bytes32 x;
+        bytes32 y;
+    }
+
+    struct TestVectors {
+        // number of tests
+        uint256 numtests;
+        // JSON string containing the test vectors
+        string fixtures;
+    }
+
+    TestVectors private $validFixtures;
+    TestVectors private $invalidFixtures;
     ImplementationECDSA256r1 private implementation;
 
-    string private constant VALID_VECTOR_FILE_PATH = "test/fixtures/vec_valid.json";
-    string private constant INVALID_VECTOR_FILE_PATH = "test/fixtures/vec_invalid.json";
+    string private constant VALID_VECTOR_FILE_PATH = "test/fixtures/vectors.valid.json";
+    string private constant INVALID_VECTOR_FILE_PATH = "test/fixtures/vectors.invalid.json";
 
     // This function is invoked once before all tests are run
     constructor() {
         // load the test vectores from the provided JSON files
-        $validVectors = _loadFixtures(true);
-        $invalidVectors = _loadFixtures(false);
+        $validFixtures = _loadFixtures(true);
+        $invalidFixtures = _loadFixtures(false);
 
         // deploy the implementation contract
         implementation = new ImplementationECDSA256r1();
@@ -53,18 +62,19 @@ contract Ecdsa256r1Test is PRBTest {
     /// @param flag `true` to load valid test vectors, `false` to load invalid test vectors
     /// @return testvectors The test vectors
     function _loadFixtures(bool flag) internal returns (TestVectors memory testvectors) {
-        // all the content of the JSON file
+        // load the correct list of test vectors from the JSON files
         testvectors.fixtures =
             flag == true ? vm.readFile(VALID_VECTOR_FILE_PATH) : vm.readFile(INVALID_VECTOR_FILE_PATH);
 
-        testvectors.qx = vm.parseJsonUint(testvectors.fixtures, ".keyx");
-        testvectors.qy = vm.parseJsonUint(testvectors.fixtures, ".keyy");
-        testvectors.numtests = vm.parseJsonUint(testvectors.fixtures, ".NumberOfTests");
+        // get the number of test vectors
+        testvectors.numtests = vm.parseJsonUint(testvectors.fixtures, "$.nbOfVectors");
     }
 
     /// @notice get the test vector n from the JSON string
     /// @param fixtures The JSON string containing the test vectors
     /// @param id The test vector number to get
+    /// @return x uint256 public key x coordinate
+    /// @return y uint256 public key y coordinate
     /// @return r uint256 The r value of the ECDSA signature.
     /// @return s uint256 The s value of the ECDSA signature.
     /// @return message The message of the test vector
@@ -73,24 +83,35 @@ contract Ecdsa256r1Test is PRBTest {
         string memory id
     )
         internal
-        returns (uint256 r, uint256 s, bytes32 message)
+        pure
+        returns (uint256 x, uint256 y, uint256 r, uint256 s, bytes32 message)
     {
-        r = vm.parseJsonUint(fixtures, string.concat(".sigx_", id));
-        s = vm.parseJsonUint(fixtures, string.concat(".sigy_", id));
-        message = vm.parseJsonBytes32(fixtures, string.concat(".msg_", id));
+        // load the JSON vector object in raw format
+        bytes memory parsedDeployData = fixtures.parseRaw(string.concat("$.vectors[", id, "]"));
+        // decode the JSON vector object into a Vector struct
+        Vector memory vector = abi.decode(parsedDeployData, (Vector));
+
+        // return the test vector formatted as expected
+        x = uint256(vector.x);
+        y = uint256(vector.y);
+        r = uint256(vector.r);
+        s = uint256(vector.s);
+        message = vector.hash;
     }
 
     /// @notice ensure the library returned the expected result for the test vectors
     /// @param flag `true` to load valid test vectors, `false` to load invalid test vectors
     function _validateInvariantEcMulMulAdd(bool flag) internal {
         // load the wycheproof test vectors
-        TestVectors memory testVectors = flag == true ? $validVectors : $invalidVectors;
+        TestVectors memory testVectors = flag == true ? $validFixtures : $invalidFixtures;
 
-        for (uint256 i = 1; i <= testVectors.numtests; i++) {
-            // get the test vector (message, signature)
-            (uint256 r, uint256 s, bytes32 message) = _getTestVector(testVectors.fixtures, vm.toString(i));
+        for (uint256 i = 0; i < testVectors.numtests; i++) {
+            (uint256 x, uint256 y, uint256 r, uint256 s, bytes32 message) =
+                _getTestVector(testVectors.fixtures, vm.toString(i));
+
             // run the verification function with the test vector
-            bool isStandardValid = implementation.verify(message, r, s, testVectors.qx, testVectors.qy);
+            bool isStandardValid = implementation.verify(message, r, s, x, y);
+
             // ensure the result is the expected one
             assertEq(isStandardValid, flag);
         }

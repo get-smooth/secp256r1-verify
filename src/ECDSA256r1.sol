@@ -169,7 +169,6 @@ library ECDSA256r1 {
                     }
                 }
 
-                // TODO: JOHN -- Internal this one ?
                 // Define length of base, exponent and modulus. 0x20 == 32 bytes
                 mstore(add(T, 0x60), zz)
                 mstore(T, 0x20)

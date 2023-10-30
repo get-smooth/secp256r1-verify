@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.19 <0.9.0;
 
-import { PRBTest } from "../../lib/prb-test/src/PRBTest.sol";
-import { StdUtils } from "../../lib/forge-std/src/StdUtils.sol";
-import { p, a, n } from "../../src/utils/secp256r1.sol";
-import "../../src/utils/secp256r1.sol" as curve;
+import { PRBTest } from "../../../lib/prb-test/src/PRBTest.sol";
+import { StdUtils } from "../../../lib/forge-std/src/StdUtils.sol";
+import { p, a, n } from "../../../src/utils/secp256r1.sol";
+import "../../../src/utils/secp256r1.sol" as curve;
 
 contract ImplementationCurve {
     function nModInv(uint256 x) external returns (uint256) {

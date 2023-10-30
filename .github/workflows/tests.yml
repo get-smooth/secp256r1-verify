@@ -121,7 +121,6 @@ jobs:
       - name: Install the Node.js dependencies
         run: npm ci
 
-      # TODO: Rework the job to correctly print the output of the test command
       - name: Run tests with gas reporting
         run:
           forge test --gas-report --no-match-test "test.*_ReportSkip|test_RevertWhen|testFuzz_RevertWhen" >

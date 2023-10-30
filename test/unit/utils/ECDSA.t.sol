@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.19 <0.9.0;
 
-import { PRBTest } from "../../lib/prb-test/src/PRBTest.sol";
-import { StdUtils } from "../../lib/forge-std/src/StdUtils.sol";
-import { ECDSA, p } from "../../src/utils/ECDSA.sol";
+import { PRBTest } from "../../../lib/prb-test/src/PRBTest.sol";
+import { StdUtils } from "../../../lib/forge-std/src/StdUtils.sol";
+import { ECDSA, p } from "../../../src/utils/ECDSA.sol";
 
 struct zzPoint {
     uint256 x;
