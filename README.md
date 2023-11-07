@@ -32,9 +32,10 @@
 ## Description
 
 `secp256r1-verify` is a specialized Solidity library that enables on-chain ECDSA signature verification on the secp256r1
-curve with notable efficiency. This repository offers three distinct implementations for signature verification, each
-carrying its own set of advantages and trade-offs. It sets a vital foundation for the widespread application of FIDO2's
-webauthn, serving as an authentication protocol for smart-accounts.
+curve with notable efficiency. This repository is a simple implementation for signature verification. It sets a vital
+foundation for the widespread application of FIDO2's Webauthn, serving as an authentication protocol for smart accounts.
+If you are looking for an alternative implementation, such as the ones based on the `*codedopy` opcodes, check out
+Renaud Dubois' [FreshCryptoLib](https://github.com/rdubois-crypto/FreshCryptoLib) repository.
 
 ## Installation
 
@@ -58,8 +59,7 @@ To install the `secp256r1-verify` package in a Hardhat or Truffle project, use `
 npm install @0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify
 ```
 
-After the installation, import the package into your project and use it to generate precomputed points for the secp256r1
-elliptic curve.
+After the installation, import the package into your project and use it.
 
 > ⚠️ Note: This package is not published on the npm registry, and is only available on GitHub Packages. You need to be
 > authenticated with GitHub Packages to install it. For more information, please refer to the
@@ -68,15 +68,14 @@ elliptic curve.
 
 ## Usage
 
-This repository provides three unique signature verification implementations, each having its own benefits and
-drawbacks. After you've integrated this library into your project, you can freely import and use the implementation that
-best suits your specific use-case and requirements. Let's take a more detailed look at each one.
+This repository provides an unique verification implementation. After you've integrated this library into your project,
+you can freely import the `ECDSA256r1` and use it.
 
-> 🚨 None of the implementations have been audited. DO NOT USE THEM IN PRODUCTION.
+> 🚨 The implementations have not been audited. DO NOT USE IT IN PRODUCTION.
 
 ### 1️⃣ The traditional implementation
 
-The traditional approach is the most direct out of the three and is found in the
+The traditional approach is the implementation present in this repository. You can take a look to it here:
 [ECDSA256r1 file](./src/ECDSA256r1.sol). This implementation is ready to use right out of the box; simply deploy the
 library and interact with it by calling its singular exposed function, `verify`, which accepts three parameters:
 
@@ -85,95 +84,7 @@ library and interact with it by calling its singular exposed function, `verify`,
 - `uint256[2] calldata point`: The public key point of the signer
 
 This approach computes `uG + vQ` using the Strauss-Shamir's trick on the secp256r1 elliptic curve **on-chain**, where G
-is the base point and Q is the public key. Though this is the least gas-efficient method, it's also the simplest to set
-up. Use this approach if you're not worried about verification process costs.
-
-### 2️⃣ The external precomputed points implementation
-
-The external precomputed points approach is our most established solution, found in the
-[ECDSA256r1Precompute file](./src/ECDSA256r1Precompute.sol). Unlike the traditional approach, this requires precomputing
-a table of 256 points off-chain for each public key you wish to verify a message from.
-
-In order to mitigate the costly on-chain computation required in the traditional approach, we precompute a table of 256
-points for each public key we want to verify the message from. This table is computed off-chain and stored in a smart
-contract, which is then deployed on-chain and used by the `ECDSA256r1Precompute` library to verify the message.
-
-Instead of deploying a functional contract (a contract whose bytecode makes sense in the Ethereum Virtual Machine
-context), we only deploy the precomputed table. The EVM does not require the code pushed to be understood by the virtual
-machine. You can push bytecodes containing unsupported EVM opcodes. This means that the contract storing the precomputed
-table isn't a traditional contract; it's an immutable piece of on-chain data. Calling it will result in a revert as the
-instructions set into it don't make sense.
-
-We deploy the precomputed table this way because it allows us to use the highly gas-efficient
-[`extcodecopy`](https://www.evm.codes/#3c) opcode to read the table. This opcode is used to copy some segments of a
-contract's bytecode into memory. In our case, the contract's bytecode is the precomputed table, so we can read the table
-in a very gas-efficient way (compared to storing it in storage -- which would be costly in gas terms because it would
-necessitate using multiple expensive [SLOAD](https://www.evm.codes/#54) opcodes).
-
-The `verify` function of this implementation takes 3 parameters:
-
-- `bytes32 messageHash`: The hash of the message to verify
-- `uint256[2] calldata rs`: The r and s values of the ECDSA signature
-- `address precomputedTable`: The address of the contract containing the precomputations
-
-This method significantly outperforms the traditional approach in gas terms, but it's also more challenging to implement
-as it requires off-chain point precomputations and on-chain storage before message verification. Furthermore, deployment
-gas costs must be factored in. It is recommended to use this approach if you are concerned about the cost of the
-verification process and your scenario involves multiple verifications from the same public key.
-
-> 🔜 Example scripts will soon be available to assist with off-chain point precomputations and on-chain precomputed
-> table deployment. Meanwhile, if you want to precompute the points off-chain yourself, you can use the following
-> [library](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation) developed by us for this
-> purpose.
-
-### 3️⃣ The internal precomputed points implementation (**work in progress**)
-
-The internal precomputed points approach is our latest solution, still a work-in-progress and located in the
-[ECDSA256r1PrecomputeInternal file](./src/ECDSA256PrecomputeInternal.sol). Like the external precomputed points
-approach, you'll need to precompute a table of 256 points off-chain for each public key from which you wish to verify a
-message. The difference here is that the precomputed table is stored directly within the contract that uses the library,
-rather than being stored in a dedicated account. Let's examine how this works.
-
-Like the external precomputed points approach, this implementation sidesteps the expensive on-chain computation of the
-traditional approach. The process for generating precomputed points remains the same until we reach the point of
-on-chain precomputed table deployment. Instead of deploying the precomputed table on-chain, we store it directly within
-the contract that utilizes the library. One way to achieve this is to create a contract containing a constant of the
-same size as the precomputed tables (64\*256 bytes are crucial), compile it once, and then whenever you need it replace
-the placeholder value of the constant with the precomputed points in the compiled contract's bytecode. In addition to
-replacing the placeholder value of the constant with the precomputed points, the script must calculate the constant's
-offset in the contract's bytecode. This offset is used to locate this constant in the contract's bytecode.
-
-Once this is accomplished and the contract is deployed on-chain, the same contract (functional this time because the
-precomputed points coexist with the contract's logic) can read the precomputed table from its own bytecode using the
-[codecopy](https://www.evm.codes/#39) opcode. This opcode copies segments of the bytecode in the current environment
-into memory. In our case, the contract's bytecode contains the precomputed table, allowing us to read the precomputed
-table in a highly gas-efficient manner using the constant's offset in the contract's bytecode (calculated by the
-script).
-
-The `verify` function of this implementation takes 3 parameters:
-
-- `bytes32 message`: The hash of the message to verify
-- `uint256[2] calldata rs`: The r and s values of the ECDSA signature
-- `uint256 precomputedOffset`: The offset where the precomputed points starts in the bytecode
-
-The `codecopy` opcode is cheaper than `extcodecopy` because it doesn't need to perform a call to another contract; the
-account's code is already hot. `codecopy` is used in a way that only loads part of the precomputation into memory, as
-opposed to copying the entire table into memory before manipulation.
-
-However, this approach does come with significant trade-offs. While it could reduce gas consumption in a unique-signer
-scenario that can't be altered, it's not recommended for scenarios where the public key allowed for a contract may
-change. In addition, each contract includes its own precomputed points, in contrast to a scenario where precomputed
-points for a specific public key are stored once in a dedicated account and used by multiple contracts. This approach is
-definitely less composable and flexible than the external precomputed points approach. These factors should be weighed
-before considering this approach.
-
-> 🚨 As stated, this implementation is highly experimental. At this point, this implementation hasn't been tested. IT IS
-> NOT RECOMMENDED FOR USE IN PRODUCTION.
-
-> 🔜 Example scripts will soon be available to assist with off-chain point precomputations and on-chain precomputed
-> table deployment. Meanwhile, if you want to precompute the points off-chain yourself, you can use the following
-> [library](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation) developed by us for this
-> purpose.
+is the base point and Q is the public key.
 
 ### Scripts
 
@@ -199,26 +110,6 @@ library. The library version corresponds to commit
 | 1002641         | 5040            |        |        |        |
 | Function Name   | min             | avg    | median | max    |
 | verify          | 192620          | 202959 | 202905 | 210079 |
-
-### The external precomputed points implementation [🔗](#2️⃣-the-external-precomputed-points-implementation-recommended)
-
-| Deployment Cost | Deployment Size |       |        |       |
-| --------------- | --------------- | ----- | ------ | ----- |
-| 675908          | 3408            |       |        |       |
-| Function Name   | min             | avg   | median | max   |
-| verify          | 74589           | 75378 | 75507  | 75507 |
-
-Although the prerequisites for implementing this approach are more complex, the gas cost for the verification process is
-over three times less expensive than the traditional method.
-
-> ℹ️ It's important to note that since 2021, there has been ongoing discussion about a potential yet unplanned overhaul
-> of the extcodecopy opcode. If such a revamp occurs, it could result in a significant increase in the gas cost of this
-> implementation. This is an issue worth monitoring. You can learn more about the possible revamp in this
-> [blog post](https://notes.ethereum.org/@vbuterin/witness_gas_cost_2).
-
-### The external precomputed points implementation [🔗](#3️⃣-the-internal-precomputed-points-implementation-work-in-progress)
-
-As this implementation is still work-in-progress, the benchmark is not yet available.
 
 ## Contributing
 

@@ -186,7 +186,7 @@ jobs:
         # the precompute internal version of the library is also excluded from the report as
         # it is highly experimental and to meant to be used at all
         run: "forge coverage --report lcov && lcov --remove lcov.info \
-          -o lcov.info 'test/*' 'script/*' 'src/ECDSA256PrecomputeInternal.sol'"
+          -o lcov.info 'test/*' 'script/*'"
 
       - name: "Add coverage summary"
         run: |
