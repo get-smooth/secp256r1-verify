@@ -90,7 +90,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="index.html">Home</a></li><li class="chapter-item affix "><li class="part-title">src</li><li class="chapter-item "><a href="src/utils/index.html">❱ utils</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="src/utils/ECDSA.sol/library.ECDSA.html">ECDSA</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/function.nModInv.html">nModInv</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/function.pModInv.html">pModInv</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/constants.secp256r1.html">secp256r1 constants</a></li></ol></li><li class="chapter-item "><a href="src/ECDSA256PrecomputeInternal.sol/library.ECDSA256r1PrecomputeInternal.html">ECDSA256r1PrecomputeInternal</a></li><li class="chapter-item "><a href="src/ECDSA256r1.sol/library.ECDSA256r1.html">ECDSA256r1</a></li><li class="chapter-item "><a href="src/ECDSA256r1Precompute.sol/library.ECDSA256r1Precompute.html">ECDSA256r1Precompute</a></li></ol>
+                <ol class="chapter"><li class="chapter-item "><a href="index.html">Home</a></li><li class="chapter-item affix "><li class="part-title">src</li><li class="chapter-item "><a href="src/utils/index.html">❱ utils</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="src/utils/ECDSA.sol/library.ECDSA.html">ECDSA</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/function.nModInv.html">nModInv</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/function.pModInv.html">pModInv</a></li><li class="chapter-item "><a href="src/utils/secp256r1.sol/constants.secp256r1.html">secp256r1 constants</a></li></ol></li><li class="chapter-item "><a href="src/ECDSA256r1.sol/library.ECDSA256r1.html">ECDSA256r1</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -184,9 +184,10 @@
 <a href="./LICENSE.html"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a> <img src="https://img.shields.io/badge/Audited-No-red.svg" alt="Is it audited?" /></p>
 <h2 id="description"><a class="header" href="#description">Description</a></h2>
 <p><code>secp256r1-verify</code> is a specialized Solidity library that enables on-chain ECDSA signature verification on the secp256r1
-curve with notable efficiency. This repository offers three distinct implementations for signature verification, each
-carrying its own set of advantages and trade-offs. It sets a vital foundation for the widespread application of FIDO2's
-webauthn, serving as an authentication protocol for smart-accounts.</p>
+curve with notable efficiency. This repository is a simple implementation for signature verification. It sets a vital
+foundation for the widespread application of FIDO2's Webauthn, serving as an authentication protocol for smart accounts.
+If you are looking for an alternative implementation, such as the ones based on the <code>*codedopy</code> opcodes, check out
+Renaud Dubois' <a href="https://github.com/rdubois-crypto/FreshCryptoLib">FreshCryptoLib</a> repository.</p>
 <h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
 <h3 id="foundry"><a class="header" href="#foundry">Foundry</a></h3>
 <p>To install the <code>secp256r1-verify</code> package in a Foundry project, execute the following command:</p>
@@ -199,8 +200,7 @@ library, follow the instructions in the
 <p>To install the <code>secp256r1-verify</code> package in a Hardhat or Truffle project, use <code>npm</code> to run the following command:</p>
 <pre><code class="language-sh">npm install @0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify
 </code></pre>
-<p>After the installation, import the package into your project and use it to generate precomputed points for the secp256r1
-elliptic curve.</p>
+<p>After the installation, import the package into your project and use it.</p>
 <blockquote>
 <p>⚠️ Note: This package is not published on the npm registry, and is only available on GitHub Packages. You need to be
 authenticated with GitHub Packages to install it. For more information, please refer to the
@@ -208,14 +208,13 @@ authenticated with GitHub Packages to install it. For more information, please r
 Please open an issue if you would like to see this package on the npm registry.</p>
 </blockquote>
 <h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
-<p>This repository provides three unique signature verification implementations, each having its own benefits and
-drawbacks. After you've integrated this library into your project, you can freely import and use the implementation that
-best suits your specific use-case and requirements. Let's take a more detailed look at each one.</p>
+<p>This repository provides an unique verification implementation. After you've integrated this library into your project,
+you can freely import the <code>ECDSA256r1</code> and use it.</p>
 <blockquote>
-<p>🚨 None of the implementations have been audited. DO NOT USE THEM IN PRODUCTION.</p>
+<p>🚨 The implementations have not been audited. DO NOT USE IT IN PRODUCTION.</p>
 </blockquote>
 <h3 id="1-the-traditional-implementation"><a class="header" href="#1-the-traditional-implementation">1️⃣ The traditional implementation</a></h3>
-<p>The traditional approach is the most direct out of the three and is found in the
+<p>The traditional approach is the implementation present in this repository. You can take a look to it here:
 <a href="./src/ECDSA256r1.sol">ECDSA256r1 file</a>. This implementation is ready to use right out of the box; simply deploy the
 library and interact with it by calling its singular exposed function, <code>verify</code>, which accepts three parameters:</p>
 <ul>
@@ -224,86 +223,7 @@ library and interact with it by calling its singular exposed function, <code>ver
 <li><code>uint256[2] calldata point</code>: The public key point of the signer</li>
 </ul>
 <p>This approach computes <code>uG + vQ</code> using the Strauss-Shamir's trick on the secp256r1 elliptic curve <strong>on-chain</strong>, where G
-is the base point and Q is the public key. Though this is the least gas-efficient method, it's also the simplest to set
-up. Use this approach if you're not worried about verification process costs.</p>
-<h3 id="2-the-external-precomputed-points-implementation"><a class="header" href="#2-the-external-precomputed-points-implementation">2️⃣ The external precomputed points implementation</a></h3>
-<p>The external precomputed points approach is our most established solution, found in the
-<a href="./src/ECDSA256r1Precompute.sol">ECDSA256r1Precompute file</a>. Unlike the traditional approach, this requires precomputing
-a table of 256 points off-chain for each public key you wish to verify a message from.</p>
-<p>In order to mitigate the costly on-chain computation required in the traditional approach, we precompute a table of 256
-points for each public key we want to verify the message from. This table is computed off-chain and stored in a smart
-contract, which is then deployed on-chain and used by the <code>ECDSA256r1Precompute</code> library to verify the message.</p>
-<p>Instead of deploying a functional contract (a contract whose bytecode makes sense in the Ethereum Virtual Machine
-context), we only deploy the precomputed table. The EVM does not require the code pushed to be understood by the virtual
-machine. You can push bytecodes containing unsupported EVM opcodes. This means that the contract storing the precomputed
-table isn't a traditional contract; it's an immutable piece of on-chain data. Calling it will result in a revert as the
-instructions set into it don't make sense.</p>
-<p>We deploy the precomputed table this way because it allows us to use the highly gas-efficient
-<a href="https://www.evm.codes/#3c"><code>extcodecopy</code></a> opcode to read the table. This opcode is used to copy some segments of a
-contract's bytecode into memory. In our case, the contract's bytecode is the precomputed table, so we can read the table
-in a very gas-efficient way (compared to storing it in storage -- which would be costly in gas terms because it would
-necessitate using multiple expensive <a href="https://www.evm.codes/#54">SLOAD</a> opcodes).</p>
-<p>The <code>verify</code> function of this implementation takes 3 parameters:</p>
-<ul>
-<li><code>bytes32 messageHash</code>: The hash of the message to verify</li>
-<li><code>uint256[2] calldata rs</code>: The r and s values of the ECDSA signature</li>
-<li><code>address precomputedTable</code>: The address of the contract containing the precomputations</li>
-</ul>
-<p>This method significantly outperforms the traditional approach in gas terms, but it's also more challenging to implement
-as it requires off-chain point precomputations and on-chain storage before message verification. Furthermore, deployment
-gas costs must be factored in. It is recommended to use this approach if you are concerned about the cost of the
-verification process and your scenario involves multiple verifications from the same public key.</p>
-<blockquote>
-<p>🔜 Example scripts will soon be available to assist with off-chain point precomputations and on-chain precomputed
-table deployment. Meanwhile, if you want to precompute the points off-chain yourself, you can use the following
-<a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation">library</a> developed by us for this
-purpose.</p>
-</blockquote>
-<h3 id="3-the-internal-precomputed-points-implementation-work-in-progress"><a class="header" href="#3-the-internal-precomputed-points-implementation-work-in-progress">3️⃣ The internal precomputed points implementation (<strong>work in progress</strong>)</a></h3>
-<p>The internal precomputed points approach is our latest solution, still a work-in-progress and located in the
-<a href="./src/ECDSA256PrecomputeInternal.sol">ECDSA256r1PrecomputeInternal file</a>. Like the external precomputed points
-approach, you'll need to precompute a table of 256 points off-chain for each public key from which you wish to verify a
-message. The difference here is that the precomputed table is stored directly within the contract that uses the library,
-rather than being stored in a dedicated account. Let's examine how this works.</p>
-<p>Like the external precomputed points approach, this implementation sidesteps the expensive on-chain computation of the
-traditional approach. The process for generating precomputed points remains the same until we reach the point of
-on-chain precomputed table deployment. Instead of deploying the precomputed table on-chain, we store it directly within
-the contract that utilizes the library. One way to achieve this is to create a contract containing a constant of the
-same size as the precomputed tables (64*256 bytes are crucial), compile it once, and then whenever you need it replace
-the placeholder value of the constant with the precomputed points in the compiled contract's bytecode. In addition to
-replacing the placeholder value of the constant with the precomputed points, the script must calculate the constant's
-offset in the contract's bytecode. This offset is used to locate this constant in the contract's bytecode.</p>
-<p>Once this is accomplished and the contract is deployed on-chain, the same contract (functional this time because the
-precomputed points coexist with the contract's logic) can read the precomputed table from its own bytecode using the
-<a href="https://www.evm.codes/#39">codecopy</a> opcode. This opcode copies segments of the bytecode in the current environment
-into memory. In our case, the contract's bytecode contains the precomputed table, allowing us to read the precomputed
-table in a highly gas-efficient manner using the constant's offset in the contract's bytecode (calculated by the
-script).</p>
-<p>The <code>verify</code> function of this implementation takes 3 parameters:</p>
-<ul>
-<li><code>bytes32 message</code>: The hash of the message to verify</li>
-<li><code>uint256[2] calldata rs</code>: The r and s values of the ECDSA signature</li>
-<li><code>uint256 precomputedOffset</code>: The offset where the precomputed points starts in the bytecode</li>
-</ul>
-<p>The <code>codecopy</code> opcode is cheaper than <code>extcodecopy</code> because it doesn't need to perform a call to another contract; the
-account's code is already hot. <code>codecopy</code> is used in a way that only loads part of the precomputation into memory, as
-opposed to copying the entire table into memory before manipulation.</p>
-<p>However, this approach does come with significant trade-offs. While it could reduce gas consumption in a unique-signer
-scenario that can't be altered, it's not recommended for scenarios where the public key allowed for a contract may
-change. In addition, each contract includes its own precomputed points, in contrast to a scenario where precomputed
-points for a specific public key are stored once in a dedicated account and used by multiple contracts. This approach is
-definitely less composable and flexible than the external precomputed points approach. These factors should be weighed
-before considering this approach.</p>
-<blockquote>
-<p>🚨 As stated, this implementation is highly experimental. At this point, this implementation hasn't been tested. IT IS
-NOT RECOMMENDED FOR USE IN PRODUCTION.</p>
-</blockquote>
-<blockquote>
-<p>🔜 Example scripts will soon be available to assist with off-chain point precomputations and on-chain precomputed
-table deployment. Meanwhile, if you want to precompute the points off-chain yourself, you can use the following
-<a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation">library</a> developed by us for this
-purpose.</p>
-</blockquote>
+is the base point and Q is the public key.</p>
 <h3 id="scripts"><a class="header" href="#scripts">Scripts</a></h3>
 <p>This repository includes a <a href="./script">script</a> directory containing a set of scripts that can be used to deploy the
 different implementations on-chain. Each script contains a set of instructions and an example of how to use it. The
@@ -325,23 +245,6 @@ to have the best gas consumption.</p>
 <tr><td>verify</td><td>192620</td><td>202959</td><td>202905</td><td>210079</td></tr>
 </tbody></table>
 </div>
-<h3 id="the-external-precomputed-points-implementation-"><a class="header" href="#the-external-precomputed-points-implementation-">The external precomputed points implementation <a href="index.html#2%EF%B8%8F%E2%83%A3-the-external-precomputed-points-implementation-recommended">🔗</a></a></h3>
-<div class="table-wrapper"><table><thead><tr><th>Deployment Cost</th><th>Deployment Size</th><th></th><th></th><th></th></tr></thead><tbody>
-<tr><td>675908</td><td>3408</td><td></td><td></td><td></td></tr>
-<tr><td>Function Name</td><td>min</td><td>avg</td><td>median</td><td>max</td></tr>
-<tr><td>verify</td><td>74589</td><td>75378</td><td>75507</td><td>75507</td></tr>
-</tbody></table>
-</div>
-<p>Although the prerequisites for implementing this approach are more complex, the gas cost for the verification process is
-over three times less expensive than the traditional method.</p>
-<blockquote>
-<p>ℹ️ It's important to note that since 2021, there has been ongoing discussion about a potential yet unplanned overhaul
-of the extcodecopy opcode. If such a revamp occurs, it could result in a significant increase in the gas cost of this
-implementation. This is an issue worth monitoring. You can learn more about the possible revamp in this
-<a href="https://notes.ethereum.org/@vbuterin/witness_gas_cost_2">blog post</a>.</p>
-</blockquote>
-<h3 id="the-external-precomputed-points-implementation--1"><a class="header" href="#the-external-precomputed-points-implementation--1">The external precomputed points implementation <a href="index.html#3%EF%B8%8F%E2%83%A3-the-internal-precomputed-points-implementation-work-in-progress">🔗</a></a></h3>
-<p>As this implementation is still work-in-progress, the benchmark is not yet available.</p>
 <h2 id="contributing"><a class="header" href="#contributing">Contributing</a></h2>
 <p>To contribute to the project, you must have Foundry and Node.js installed on your system. You can download them from
 their official websites:</p>
@@ -493,7 +396,7 @@ him.</p>
 <li><a href="src/utils/secp256r1.sol/constants.secp256r1.html">secp256r1 constants</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa"><a class="header" href="#ecdsa">ECDSA</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/06d037ccbde1588f7b9a230738f209f6812fa77f/src/utils/ECDSA.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/4c305cabca8a3071434493c43851f7d089c872d3/src/utils/ECDSA.sol">Git Source</a></p>
 <p>Library for handling Elliptic Curve Digital Signature Algorithm (ECDSA) operations on a compatible curve</p>
 <h2 id="functions"><a class="header" href="#functions">Functions</a></h2>
 <h3 id="zz2aff"><a class="header" href="#zz2aff">zz2Aff</a></h3>
@@ -610,7 +513,7 @@ https://hyperelliptic.org/EFD/g1p/auto-shortw-xyzz-3.html#addition-add-2008-s*</
 <tr><td><code>y2</code></td><td><code>uint256</code></td><td>The Y-coordinate of the resulting point</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="nmodinv"><a class="header" href="#nmodinv">nModInv</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/06d037ccbde1588f7b9a230738f209f6812fa77f/src/utils/secp256r1.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/4c305cabca8a3071434493c43851f7d089c872d3/src/utils/secp256r1.sol">Git Source</a></p>
 <p>Calculate the modular inverse of a given integer, which is the inverse of this integer modulo n.</p>
 <p><em>Uses the ModExp precompiled contract at address 0x05 for fast computation using little Fermat theorem</em></p>
 <pre><code class="language-solidity">function nModInv(uint256 self) returns (uint256 result);
@@ -625,7 +528,7 @@ https://hyperelliptic.org/EFD/g1p/auto-shortw-xyzz-3.html#addition-add-2008-s*</
 <tr><td><code>result</code></td><td><code>uint256</code></td><td>The modular inverse of the input integer. If the modular inverse doesn't exist, it revert the tx</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="pmodinv"><a class="header" href="#pmodinv">pModInv</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/06d037ccbde1588f7b9a230738f209f6812fa77f/src/utils/secp256r1.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/4c305cabca8a3071434493c43851f7d089c872d3/src/utils/secp256r1.sol">Git Source</a></p>
 <p>Calculate the modular inverse of a given integer, which is the inverse of this integer modulo p.</p>
 <p><em>Uses the ModExp precompiled contract at address 0x05 for fast computation using little Fermat theorem</em></p>
 <pre><code class="language-solidity">function pModInv(uint256 self) returns (uint256 result);
@@ -640,7 +543,7 @@ https://hyperelliptic.org/EFD/g1p/auto-shortw-xyzz-3.html#addition-add-2008-s*</
 <tr><td><code>result</code></td><td><code>uint256</code></td><td>The modular inverse of the input integer. If the modular inverse doesn't exist, it revert the tx</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="constants"><a class="header" href="#constants">Constants</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/06d037ccbde1588f7b9a230738f209f6812fa77f/src/utils/secp256r1.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/4c305cabca8a3071434493c43851f7d089c872d3/src/utils/secp256r1.sol">Git Source</a></p>
 <h3 id="p"><a class="header" href="#p">p</a></h3>
 <pre><code class="language-solidity">uint256 constant p = 0xFFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF;
 </code></pre>
@@ -671,71 +574,13 @@ https://hyperelliptic.org/EFD/g1p/auto-shortw-xyzz-3.html#addition-add-2008-s*</
 <h3 id="modexp_precompile"><a class="header" href="#modexp_precompile">MODEXP_PRECOMPILE</a></h3>
 <pre><code class="language-solidity">address constant MODEXP_PRECOMPILE = 0x0000000000000000000000000000000000000005;
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa256r1precomputeinternal"><a class="header" href="#ecdsa256r1precomputeinternal">ECDSA256r1PrecomputeInternal</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/06d037ccbde1588f7b9a230738f209f6812fa77f/src/ECDSA256PrecomputeInternal.sol">Git Source</a></p>
-<p>This library is for ECDSA verification using a precomputed table of multiples of P and Q. The Shamir's
-Secret Sharing scheme is used in 8 dimensions. The precomputed table must be stored <strong>in</strong> the bytecode of
-the contract calling the verify function of this library (using delegatecall as it's automatically done in
-Solidity).</p>
-<p><em>This library is more gas efficient than the ECDSA256r1Precompute library (and way more than the ECDSA256r1),
-but it requires the precomputed table of multiples of P and Q to be stored <strong>in</strong> the functional bytecode of
-the contract that consumes this library. How does it works? For each public key you want to verify, you must
-precompute the associated 256 points and inject it in the bytecode of the smart account after the
-compilation of the contract. One way to do so is to initialise a constant in the contract of the
-precomputation size for 256 points. This constant will be initialized with an easily recognizable value, so
-that after compiling the contract, you can manually replace the placeholder value with the precompute
-points. Now, you need to calculate the offset where the precomputed points will be stored in the bytecode
-in order to pass it to the verify function. The verify function will use the opcode <code>codecopy</code> (not
-<code>extcodecopy</code>) as it's done in the ECDSA256r1Precompute library to read the precomputed points.
-This trick is more heavy in term of workflow off-chain but it's the more gas efficient on-chain solution we
-found so far (<code>codecopy</code> is 33x cheaper than <code>extcodecopy</code>). This library is not recommended for everyone,
-if you are looking for an in-between, the library ECDSA256r1Precompute is probably what you are looking for.
-More info on the <code>extcodecopy</code> opcode: https://www.evm.codes/#3c
-How to generate the precomputed table: github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation</em></p>
-<h2 id="functions-1"><a class="header" href="#functions-1">Functions</a></h2>
-<h3 id="mulmuladd"><a class="header" href="#mulmuladd">mulmuladd</a></h3>
-<p>Executes Shamir's trick over 8 dimensions, using precomputations stored in the bytecode of the contract
-that uses this library.</p>
-<p><em>The external tool to generate tables from the public key is listed in the documentation of the contract</em></p>
-<pre><code class="language-solidity">function mulmuladd(uint256 scalar_u, uint256 scalar_v, uint256 precomputedOffset) internal returns (uint256 X);
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>scalar_u</code></td><td><code>uint256</code></td><td>The first scalar for the Shamir's trick computation.</td></tr>
-<tr><td><code>scalar_v</code></td><td><code>uint256</code></td><td>The second scalar for the Shamir's trick computation.</td></tr>
-<tr><td><code>precomputedOffset</code></td><td><code>uint256</code></td><td>The <strong>offset</strong> where the precomputed points starts in the bytecode</td></tr>
-</tbody></table>
-</div>
-<p><strong>Returns</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>X</code></td><td><code>uint256</code></td><td>Resulting x-coordinate of the computed point</td></tr>
-</tbody></table>
-</div>
-<h3 id="verify"><a class="header" href="#verify">verify</a></h3>
-<p>Verifies an ECDSA signature using a precomputed table of multiples of P and Q stored in the bytecode of
-the contrat that uses this library</p>
-<p><em>Note the required interactions with the precompled contract can revert the transaction</em></p>
-<pre><code class="language-solidity">function verify(bytes32 message, uint256 r, uint256 s, uint256 precomputedOffset) internal returns (bool);
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>message</code></td><td><code>bytes32</code></td><td>The message that was signed.</td></tr>
-<tr><td><code>r</code></td><td><code>uint256</code></td><td>uint256 The r value of the ECDSA signature.</td></tr>
-<tr><td><code>s</code></td><td><code>uint256</code></td><td>uint256 The s value of the ECDSA signature.</td></tr>
-<tr><td><code>precomputedOffset</code></td><td><code>uint256</code></td><td>The <strong>offset</strong> where the precomputed points starts in the bytecode</td></tr>
-</tbody></table>
-</div>
-<p><strong>Returns</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>&lt;none&gt;</code></td><td><code>bool</code></td><td>True if the signature is valid, false otherwise.</td></tr>
-</tbody></table>
-</div><div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa256r1"><a class="header" href="#ecdsa256r1">ECDSA256r1</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/06d037ccbde1588f7b9a230738f209f6812fa77f/src/ECDSA256r1.sol">Git Source</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa256r1"><a class="header" href="#ecdsa256r1">ECDSA256r1</a></h1>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/4c305cabca8a3071434493c43851f7d089c872d3/src/ECDSA256r1.sol">Git Source</a></p>
 <p>A library to verify ECDSA signatures made on the secp256r1 curve</p>
 <p><em>This is the easiest library to deal with but also the most expensive in terms of gas cost. Indeed, this library
 must calculate multiple points on the curve in order to verify the signature. Use it kmowingly.</em></p>
-<h2 id="functions-2"><a class="header" href="#functions-2">Functions</a></h2>
-<h3 id="mulmuladd-1"><a class="header" href="#mulmuladd-1">mulmuladd</a></h3>
+<h2 id="functions-1"><a class="header" href="#functions-1">Functions</a></h2>
+<h3 id="mulmuladd"><a class="header" href="#mulmuladd">mulmuladd</a></h3>
 <p>and Q is the public key.</p>
 <pre><code class="language-solidity">function mulmuladd(uint256 Q0, uint256 Q1, uint256 scalar_u, uint256 scalar_v) internal returns (uint256 X);
 </code></pre>
@@ -752,7 +597,7 @@ must calculate multiple points on the curve in order to verify the signature. Us
 <tr><td><code>X</code></td><td><code>uint256</code></td><td>Resulting x-coordinate of the computed point</td></tr>
 </tbody></table>
 </div>
-<h3 id="verify-1"><a class="header" href="#verify-1">verify</a></h3>
+<h3 id="verify"><a class="header" href="#verify">verify</a></h3>
 <p>Verifies an ECDSA signature on the secp256r1 curve given the message, signature, and public key.
 This function is the only one exposed by the library</p>
 <p><em>Note the required interactions with the precompled contract can revert the transaction</em></p>
@@ -770,56 +615,6 @@ This function is the only one exposed by the library</p>
 <p><strong>Returns</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>&lt;none&gt;</code></td><td><code>bool</code></td><td>bool True if the signature is valid, false otherwise</td></tr>
-</tbody></table>
-</div><div style="break-before: page; page-break-before: always;"></div><h1 id="ecdsa256r1precompute"><a class="header" href="#ecdsa256r1precompute">ECDSA256r1Precompute</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/06d037ccbde1588f7b9a230738f209f6812fa77f/src/ECDSA256r1Precompute.sol">Git Source</a></p>
-<p>This library is for ECDSA verification using a precomputed shamir table of 256 points. The Shamir's
-Secret Sharing scheme is used in 8 dimensions. The precomputed table must be stored in an external contract
-upstream.</p>
-<p><em>This library is way more gas efficient than the ECDSA256r1 library, but it requires a precomputed table of
-multiples of P and Q. How does it works? Everytime you want to verify a signature you first need to compute
-256 points on the curve from the public key then pushing those points as the bytecode of a new contract. The
-address of this contract is then passed to the verify function of this library in order to read the
-precomputed table. The reading process uses the <code>extcodecopy</code> opcode to read the bytecode of the provided
-contract (the precomputed points) in an efficient way.
-More info on the <code>extcodecopy</code> opcode: https://www.evm.codes/#3c
-How to generate the precomputed table: github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation</em></p>
-<h2 id="functions-3"><a class="header" href="#functions-3">Functions</a></h2>
-<h3 id="mulmuladd-2"><a class="header" href="#mulmuladd-2">mulmuladd</a></h3>
-<p>Executes Shamir's trick over 8 dimensions, using precomputations stored as bytecode of an external
-contract at the given precomputedTable address</p>
-<p><em>The external tool to generate tables from the public key is listed in the documentation of the contract</em></p>
-<pre><code class="language-solidity">function mulmuladd(uint256 scalar_u, uint256 scalar_v, address precomputedTable) internal returns (uint256 X);
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>scalar_u</code></td><td><code>uint256</code></td><td>The first scalar for the Shamir's trick computation.</td></tr>
-<tr><td><code>scalar_v</code></td><td><code>uint256</code></td><td>The second scalar for the Shamir's trick computation.</td></tr>
-<tr><td><code>precomputedTable</code></td><td><code>address</code></td><td>The address of the external contract containing the precomputations for Shamir's trick.</td></tr>
-</tbody></table>
-</div>
-<p><strong>Returns</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>X</code></td><td><code>uint256</code></td><td>Resulting x-coordinate of the computed point</td></tr>
-</tbody></table>
-</div>
-<h3 id="verify-2"><a class="header" href="#verify-2">verify</a></h3>
-<p>Verifies an ECDSA signature using a precomputed table of multiples of P and Q stored in an external
-contract</p>
-<p><em>Note the required interactions with the precompled contract can revert the transaction</em></p>
-<pre><code class="language-solidity">function verify(bytes32 message, uint256 r, uint256 s, address precomputedTable) internal returns (bool);
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>message</code></td><td><code>bytes32</code></td><td>The message to verify</td></tr>
-<tr><td><code>r</code></td><td><code>uint256</code></td><td>uint256 The r value of the ECDSA signature.</td></tr>
-<tr><td><code>s</code></td><td><code>uint256</code></td><td>uint256 The s value of the ECDSA signature.</td></tr>
-<tr><td><code>precomputedTable</code></td><td><code>address</code></td><td>The address of the external contract containing the precomputations for Shamir's trick. It is expected the contract store the precomputations as its bytecode. The contract is not supposed to be functional.</td></tr>
-</tbody></table>
-</div>
-<p><strong>Returns</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>&lt;none&gt;</code></td><td><code>bool</code></td><td>True if the signature is valid, false otherwise.</td></tr>
 </tbody></table>
 </div>
                     </main>
