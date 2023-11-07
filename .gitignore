@@ -38,3 +38,6 @@ gasreport.ansi
 
 # coverage output
 coverage
+
+# chore folder
+script/chore
