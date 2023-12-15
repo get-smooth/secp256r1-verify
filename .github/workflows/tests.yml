@@ -182,9 +182,9 @@ jobs:
 
       - name: "Generate the coverage report"
         # contracts in the test/ and script/ directory are excluded fron the report
-        # the precompute internal version of the library is also excluded from the report as
-        # it is highly experimental and to meant to be used at all
-        run: "forge coverage --report lcov && lcov --remove lcov.info \
+        # the flag `--ir-minimum` is required as the coverage report is generated without the optimization steps
+        # please remove it as soon as it is no longer needed
+        run: "forge coverage --ir-minimum  --report lcov && lcov --remove lcov.info \
           -o lcov.info 'test/*' 'script/*'"
 
       - name: "Add coverage summary"
