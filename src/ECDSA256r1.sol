@@ -127,8 +127,7 @@ library ECDSA256r1 {
                                 T1 := mulmod(MINUS_2, Y, p)
                                 // V=U^2
                                 T2 := mulmod(T1, T1, p)
-                                // S = X1*V
-                                T3 := mulmod(X, T2, p)
+
                                 // W=UV
                                 T1 := mulmod(T1, T2, p)
 
@@ -145,6 +144,8 @@ library ECDSA256r1 {
                                 // zz3=V*ZZ1, V free
                                 zz := mulmod(T2, zz, p)
 
+                                // S = X1*V
+                                T3 := mulmod(X, T2, p)
                                 // X3=M^2-2S
                                 X := addmod(mulmod(T4, T4, p), mulmod(MINUS_2, T3, p), p)
                                 // M(S-X3)
