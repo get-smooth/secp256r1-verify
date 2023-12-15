@@ -131,15 +131,17 @@ library ECDSA256r1 {
                                 T3 := mulmod(X, T2, p)
                                 // W=UV
                                 T1 := mulmod(T1, T2, p)
-                                y2 := addmod(X, zz, p)
-                                let TT1 := addmod(X, sub(p, zz), p)
-                                // X-ZZ)(X+ZZ)
-                                y2 := mulmod(y2, TT1, p)
-                                // M
+
+                                //(X-ZZ)(X+ZZ) -- xPlusZZ/xMinusZZ needed for stack management
+                                let xPlusZZ := addmod(X, sub(p, zz), p)
+                                let xMinusZZ := addmod(X, zz, p)
+                                y2 := mulmod(xMinusZZ, xPlusZZ, p)
+
+                                //M=3*(X-ZZ)(X+ZZ)
                                 T4 := mulmod(3, y2, p)
 
                                 // zzz3=W*zzz1
-                                zzz := mulmod(TT1, zzz, p)
+                                zzz := mulmod(T1, zzz, p)
                                 // zz3=V*ZZ1, V free
                                 zz := mulmod(T2, zz, p)
 
