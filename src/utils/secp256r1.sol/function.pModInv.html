@@ -91,7 +91,9 @@
             <div class="sidebar-scrollbox">
                 <ol class="chapter"><li class="chapter-item "><a href="../../../index.html">Home</a></li><li class="chapter-item affix "><li class="part-title">src</li><li class="chapter-item expanded "><a href="../../../src/utils/index.html">❱ utils</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../../src/utils/ECDSA.sol/library.ECDSA.html">ECDSA</a></li><li class="chapter-item expanded "><a href="../../../src/utils/secp256r1.sol/function.pModInv.html" class="active">pModInv</a></li><li class="chapter-item "><a href="../../../src/utils/secp256r1.sol/function.nModInv.html">nModInv</a></li><li class="chapter-item "><a href="../../../src/utils/secp256r1.sol/constants.secp256r1.html">secp256r1 constants</a></li></ol></li><li class="chapter-item "><a href="../../../src/ECDSA256r1.sol/library.ECDSA256r1.html">ECDSA256r1</a></li></ol>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
         </nav>
 
         <!-- Track and set sidebar scroll position -->
@@ -176,7 +178,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="pmodinv"><a class="header" href="#pmodinv">pModInv</a></h1>
-<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/6736fff592523bcd172bfeb94d938cd56fca96b4/src/utils/secp256r1.sol">Git Source</a></p>
+<p><a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/blob/d6e84c7340b6109ae3de0069892b64108a9c73fc/src/utils/secp256r1.sol">Git Source</a></p>
 <p>Calculate the modular inverse of a given integer, which is the inverse of this integer modulo p.</p>
 <p><em>Uses the ModExp precompiled contract at address 0x05 for fast computation using little Fermat theorem</em></p>
 <pre><code class="language-solidity">function pModInv(uint256 self) returns (uint256 result);
