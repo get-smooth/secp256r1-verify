@@ -139,6 +139,26 @@ contract Ecdsa256r1Test is PRBTest {
         uint256 _4P_res3 = implementation.mulmuladd(nQ[0], nQ[1], 2, 1);
 
         assertEq(_4P_res1, _4P_res3);
+
+        // edge case from nlordell
+        (uint256 niordellX, uint256 niordellY, uint256 niordellU, uint256 niordellV) = (
+            0xe2534a3532d08fbba02dde659ee62bd0031fe2db785596ef509302446b030852, //x
+            0x1f0ea8a4b39cc339e62011a02579d289b103693d0cf11ffaa3bd3dc0e7b12739, //y
+            0xd13800358b760290af0671ee67368e9702a7145d1b9a0024b0b61ffe7bce9214, //u
+            0x344e000d62dd80a42bc19c7b99cda3a5c0a9c51746e680092c2d87ff9ef3af6f //v
+        );
+        assertEq(
+            0xcfcfa95b195904fd97b548d9e3cd2e023e06b4f10a87c645c7d4f74a0e206bad,
+            implementation.mulmuladd(niordellX, niordellY, niordellU, niordellV)
+        );
+
+        // edge case for Shamir
+        (uint256 shamirK, uint256 shamirX,) = (
+            0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc63254f, //k
+            0x7CF27B188D034F7E8A52380304B51AC3C08969E277F21B35A60B48FC47669978, // x
+            0xF888AAEE24712FC0D6C26539608BCF244582521AC3167DD661FB4862DD878C2E // y
+        );
+        assertEq(shamirX, implementation.mulmuladd(0, 0, shamirK, 0));
     }
 
     function test_MulMullAddMultipleBy0Fail_ReportSkip(uint256 q0, uint256 q1) public {
