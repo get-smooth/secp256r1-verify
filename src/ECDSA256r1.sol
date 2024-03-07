@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.19 <0.9.0;
 
-import { ECDSA, Curve, p, gx, gy, n, MINUS_2, MINUS_1, MODEXP_PRECOMPILE } from "./utils/ECDSA.sol";
+import { ECDSA, Curve, p, gx, gy, n, MINUS_2, MINUS_1, MODEXP_PRECOMPILE, a, b } from "./utils/ECDSA.sol";
 
 /// @title ECDSA256r1
 /// @notice A library to verify ECDSA signatures made on the secp256r1 curve
@@ -13,6 +13,27 @@ import { ECDSA, Curve, p, gx, gy, n, MINUS_2, MINUS_1, MODEXP_PRECOMPILE } from 
 ///                 should be replaced if this code is to be utilized for any curve other than sec256R1.
 library ECDSA256r1 {
     using { Curve.nModInv } for uint256;
+
+    /// @notice Verifies that a point is on the secp256r1 curve
+    /// @param x The x-coordinate of the point
+    /// @param y The y-coordinate of the point
+    /// @return bool True if the point is on the curve, false otherwise
+    function isPointValid(uint256 x, uint256 y) internal pure returns (bool) {
+        if (((0 == x) && (0 == y)) || x == p || y == p) {
+            return false;
+        }
+
+        unchecked {
+            // y^2
+            uint256 lhs = mulmod(y, y, p);
+            // x^3+ax
+            uint256 rhs = addmod(mulmod(mulmod(x, x, p), x, p), mulmod(x, a, p), p);
+            // x^3 + a*x + b
+            rhs = addmod(rhs, b, p);
+
+            return lhs == rhs;
+        }
+    }
 
     //// @notice Computes uG + vQ using Strauss-Shamir's trick on the secp256r1 elliptic curve, where G is the basepoint
     ///           and Q is the public key.
