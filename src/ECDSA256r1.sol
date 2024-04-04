@@ -19,7 +19,7 @@ library ECDSA256r1 {
     /// @param y The y-coordinate of the point
     /// @return bool True if the point is on the curve, false otherwise
     function isPointValid(uint256 x, uint256 y) internal pure returns (bool) {
-        if (((0 == x) && (0 == y)) || x == p || y == p) {
+        if ((0 == x % p) && (0 == y % p)) {
             return false;
         }
 
