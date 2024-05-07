@@ -8,23 +8,23 @@
 [![Github Actions][gha-release-badge]][gha-release-url] [![Foundry][foundry-badge]][foundry]
 [![License: MIT][license-badge]][license] ![Is it audited?][audit]
 
-[github-editor-url]: https://github.dev/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/tree/main
+[github-editor-url]: https://github.dev/get-smooth/secp256r1-verify/tree/main
 [github-editor-badge]: https://img.shields.io/badge/Github-Open%20the%20Editor-purple?logo=github
 [gha-quality-url]:
-  https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/quality-checks.yml
+  https://github.com/get-smooth/secp256r1-verify/actions/workflows/quality-checks.yml
 [gha-quality-badge]:
-  https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/quality-checks.yml/badge.svg?branch=main
-[gha-test-url]: https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/tests.yml
+  https://github.com/get-smooth/secp256r1-verify/actions/workflows/quality-checks.yml/badge.svg?branch=main
+[gha-test-url]: https://github.com/get-smooth/secp256r1-verify/actions/workflows/tests.yml
 [gha-test-badge]:
-  https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/tests.yml/badge.svg?branch=main
+  https://github.com/get-smooth/secp256r1-verify/actions/workflows/tests.yml/badge.svg?branch=main
 [gha-static-analysis-url]:
-  https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/static-analysis.yml
+  https://github.com/get-smooth/secp256r1-verify/actions/workflows/static-analysis.yml
 [gha-static-analysis-badge]:
-  https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/template-foundry/actions/workflows/static-analysis.yml/badge.svg?branch=main
+  https://github.com/get-smooth/template-foundry/actions/workflows/static-analysis.yml/badge.svg?branch=main
 [gha-release-url]:
-  https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/release-package.yml
+  https://github.com/get-smooth/secp256r1-verify/actions/workflows/release-package.yml
 [gha-release-badge]:
-  https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/release-package.yml/badge.svg
+  https://github.com/get-smooth/secp256r1-verify/actions/workflows/release-package.yml/badge.svg
 [foundry]: https://book.getfoundry.sh/
 [foundry-badge]: https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg
 [license]: ./LICENSE.md
@@ -46,31 +46,16 @@ Renaud Dubois' [FreshCryptoLib](https://github.com/rdubois-crypto/FreshCryptoLib
 To install the `secp256r1-verify` package in a Foundry project, execute the following command:
 
 ```sh
-forge install https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify
+forge install https://github.com/get-smooth/secp256r1-verify
 ```
 
 This command will install the latest version of the package in your lib directory. To install a specific version of the
 library, follow the instructions in the
 [official Foundry documentation](https://book.getfoundry.sh/reference/forge/forge-install?highlight=forge%20install#forge-install).
 
-### Hardhat or Truffle
-
-To install the `secp256r1-verify` package in a Hardhat or Truffle project, use `npm` to run the following command:
-
-```sh
-npm install @0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify
-```
-
-After the installation, import the package into your project and use it.
-
-> ⚠️ Note: This package is not published on the npm registry, and is only available on GitHub Packages. You need to be
-> authenticated with GitHub Packages to install it. For more information, please refer to the
-> [troubleshooting section](#setup-github-registry). We are willing to deploy it on the npm registry if there is a need.
-> Please open an issue if you would like to see this package on the npm registry.
-
 ## Usage
 
-This repository provides an unique verification implementation. After you've integrated this library into your project,
+This repository provides a unique verification implementation. After you've integrated this library into your project,
 you can freely import the `ECDSA256r1` and use it.
 
 > 🚨 The implementations have not been audited. DO NOT USE IT IN PRODUCTION.
@@ -98,9 +83,9 @@ scripts are expected to be run using the `forge script` command.
 
 These gas reports were produced using the `0.8.19` version of the Solidity compiler (with 100k optimizer runs),
 specifically for the
-[`0.4.1`](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/releases/tag/v0.4.1) version of the
+[`0.4.1`](https://github.com/get-smooth/secp256r1-verify/releases/tag/v0.4.1) version of the
 library. The library version corresponds to commit
-[4d0716f](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/commit/4d0716fc6fd14a92488442e1dd0c18bb2c24ff41).
+[4d0716f](https://github.com/get-smooth/secp256r1-verify/commit/4d0716fc6fd14a92488442e1dd0c18bb2c24ff41).
 
 > ℹ️ If you import the library into your project, we strongly recommend you to enable the optimizer with 100k in order
 > to have the best gas consumption.
@@ -238,7 +223,7 @@ The tests use two different `cheatcodes` you should be aware of:
   calculates 256 points on the secp256r1 elliptic curve from a public key. This is required for the variants that need
   these points to be deployed on-chain. Therefore, even if it's not explicit, every time you run the test suite, a
   Node.js script is executed multiple times. You can learn more about the library we use
-  [here](https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation).
+  [here](https://github.com/get-smooth/secp256r1-computation).
 
 > 📖 Cheatcodes are special instructions exposed by Foundry to enhance the developer experience. Learn more about them
 > [here](https://book.getfoundry.sh/cheatcodes/).
@@ -260,32 +245,6 @@ make quality # run both
 ```
 
 > ℹ️ By adding the sufix `-fix` the linter and the formatter will try to fix the issues automatically.
-
-## Troubleshootings
-
-### Setup Github registry
-
-You need to configure npm to use the Github registry. You can do so using the following command in your terminal:
-
-```sh
-npm config set @0x90d2b2b7fb7599eebb6e7a32980857d8:registry=https://npm.pkg.github.com
-```
-
-This will instruct npm to use the Github registry for packages deployed by `@0x90d2b2b7fb7599eebb6e7a32980857d8`.
-
-Once the Github registry is configured, you have to create a **classic** token on Github. To do so, go to your
-[Github settings](https://github.com/settings/tokens). The token must have the read:packages scope. Once you have
-created the token, use the following command in your terminal to authenticate to the Github registry:
-
-```sh
-npm login --auth-type=legacy --registry=https://npm.pkg.github.com
-```
-
-Your Github username is the username, and the password is the token you just created. At this point, your git should be
-configured to use the Github Package Registry for our packages.
-
-> ⚠️ For more information, please refer to the
-> [GitHub documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#installing-a-package)
 
 ## Acknowledgements
 

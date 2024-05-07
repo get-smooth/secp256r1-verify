@@ -1,5 +1,5 @@
 {
-  "name": "@0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify",
+  "name": "@get-smooth/secp256r1-verify",
   "description": "A solidity library to verify a secp256r1 signature",
   "version": "0.5.3",
   "contributors": [
@@ -16,18 +16,18 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify.git"
+    "url": "git@github.com:get-smooth/secp256r1-verify.git"
   },
   "bugs": {
-    "url": "https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/issues"
+    "url": "https://github.com/get-smooth/secp256r1-verify/issues"
   },
-  "homepage": "https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify#readme",
+  "homepage": "https://github.com/get-smooth/secp256r1-verify#readme",
   "engines": {
     "node": ">= 18"
   },
   "license": "MIT",
   "devDependencies": {
-    "@0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation": "^2.2.0",
+    "@get-smooth/secp256r1-computation": "^2.2.0",
     "lefthook": "^1.4.1",
     "prettier": "^2.8.7",
     "solhint": "^3.4.0"
