@@ -1,3 +1,5 @@
+> This repository is currently under development and not ready for production use ⚠️
+
 # secp256r1 verify
 
 [![Open in Github][github-editor-badge]][github-editor-url] [![Github Actions][gha-quality-badge]][gha-quality-url]
