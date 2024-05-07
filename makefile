@@ -129,7 +129,7 @@ prettier-fix:
 # example: `c0=XXX c1=XXX make compute`
 .PHONY: compute-points
 compute-points:
-	@runcmd npx @get-smooth/secp256r1-computation $(c0) $(c1)
+	@runcmd npx @smoo.th/secp256r1-computation $(c0) $(c1)
 
 ##########################################
 ################ ALIASES  ################

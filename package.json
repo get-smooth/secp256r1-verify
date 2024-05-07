@@ -1,5 +1,5 @@
 {
-  "name": "@get-smooth/secp256r1-verify",
+  "name": "@smoo.th/secp256r1-verify",
   "description": "A solidity library to verify a secp256r1 signature",
   "version": "0.5.3",
   "contributors": [
@@ -27,7 +27,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@get-smooth/secp256r1-computation": "^2.2.0",
+    "@smoo.th/secp256r1-computation": "^2.2.0",
     "lefthook": "^1.4.1",
     "prettier": "^2.8.7",
     "solhint": "^3.4.0"

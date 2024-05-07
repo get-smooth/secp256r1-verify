@@ -18,7 +18,7 @@ contract MyScript is Script {
         // and return the table as a bytes
         string[] memory inputs = new string[](4);
         inputs[0] = "npx";
-        inputs[1] = "@get-smooth/secp256r1-computation";
+        inputs[1] = "@smoo.th/secp256r1-computation";
         inputs[2] = vm.toString(c0);
         inputs[3] = vm.toString(c1);
         points = vm.ffi(inputs);
