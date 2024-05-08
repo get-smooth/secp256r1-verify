@@ -73,10 +73,6 @@ jobs:
             echo $(($EPOCHSECONDS - $EPOCHSECONDS % 604800))
           )" >> $GITHUB_ENV
 
-      # required to install our private package from Github Packages
-      - name: Authenticate with GitHub Packages
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
-
       # needed because the precomputation scripts used by the ffi tests is a JS dependency
       - name: Install the Node.js dependencies
         run: npm ci
@@ -112,10 +108,6 @@ jobs:
           echo "FOUNDRY_FUZZ_SEED=$(
             echo $(($EPOCHSECONDS - $EPOCHSECONDS % 604800))
           )" >> $GITHUB_ENV
-
-      # required to install our private package from Github Packages
-      - name: Authenticate with GitHub Packages
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
 
       # needed because the precomputation scripts used by the ffi tests is a JS dependency
       - name: Install the Node.js dependencies
@@ -168,10 +160,6 @@ jobs:
             cache
             out
             out-optimized
-
-      # required to install our private package from Github Packages
-      - name: Authenticate with GitHub Packages
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
 
       # needed because the precomputation scripts used by the ffi tests is a JS dependency
       - name: Install the Node.js dependencies
