@@ -1,7 +1,7 @@
 {
   "name": "@smoo.th/secp256r1-verify",
   "description": "A solidity library to verify a secp256r1 signature",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "contributors": [
     {
       "name": "qd-qd",
