@@ -148,7 +148,7 @@
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        <a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify" title="Git repository" aria-label="Git repository">
+                        <a href="https://github.com/get-smooth/secp256r1-verify" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
 
@@ -177,11 +177,15 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="secp256r1-verify"><a class="header" href="#secp256r1-verify">secp256r1 verify</a></h1>
-<p><a href="https://github.dev/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/tree/main"><img src="https://img.shields.io/badge/Github-Open%20the%20Editor-purple?logo=github" alt="Open in Github" /></a> <a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/quality-checks.yml"><img src="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/quality-checks.yml/badge.svg?branch=main" alt="Github Actions" /></a>
-<a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/tests.yml"><img src="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/tests.yml/badge.svg?branch=main" alt="Github Actions" /></a>
-<a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/static-analysis.yml"><img src="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/template-foundry/actions/workflows/static-analysis.yml/badge.svg?branch=main" alt="Github Actions" /></a>
-<a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/release-package.yml"><img src="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/actions/workflows/release-package.yml/badge.svg" alt="Github Actions" /></a> <a href="https://book.getfoundry.sh/"><img src="https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg" alt="Foundry" /></a>
+                        <blockquote>
+<p>❌ This repository is deprecated. Please refer to the <a href="https://github.com/get-smooth/CryptoLib">crypto-lib</a> repository
+to find the latest implementation of the secp256r1 curve.</p>
+</blockquote>
+<h1 id="secp256r1-verify"><a class="header" href="#secp256r1-verify">secp256r1 verify</a></h1>
+<p><a href="https://github.dev/get-smooth/secp256r1-verify/tree/main"><img src="https://img.shields.io/badge/Github-Open%20the%20Editor-purple?logo=github" alt="Open in Github" /></a> <a href="https://github.com/get-smooth/secp256r1-verify/actions/workflows/quality-checks.yml"><img src="https://github.com/get-smooth/secp256r1-verify/actions/workflows/quality-checks.yml/badge.svg?branch=main" alt="Github Actions" /></a>
+<a href="https://github.com/get-smooth/secp256r1-verify/actions/workflows/tests.yml"><img src="https://github.com/get-smooth/secp256r1-verify/actions/workflows/tests.yml/badge.svg?branch=main" alt="Github Actions" /></a>
+<a href="https://github.com/get-smooth/secp256r1-verify/actions/workflows/static-analysis.yml"><img src="https://github.com/get-smooth/template-foundry/actions/workflows/static-analysis.yml/badge.svg?branch=main" alt="Github Actions" /></a>
+<a href="https://github.com/get-smooth/secp256r1-verify/actions/workflows/release-package.yml"><img src="https://github.com/get-smooth/secp256r1-verify/actions/workflows/release-package.yml/badge.svg" alt="Github Actions" /></a> <a href="https://book.getfoundry.sh/"><img src="https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg" alt="Foundry" /></a>
 <a href="./LICENSE.html"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a> <img src="https://img.shields.io/badge/Audited-No-red.svg" alt="Is it audited?" /></p>
 <h2 id="description"><a class="header" href="#description">Description</a></h2>
 <p><code>secp256r1-verify</code> is a specialized Solidity library that enables on-chain ECDSA signature verification on the secp256r1
@@ -192,24 +196,18 @@ Renaud Dubois' <a href="https://github.com/rdubois-crypto/FreshCryptoLib">FreshC
 <h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
 <h3 id="foundry"><a class="header" href="#foundry">Foundry</a></h3>
 <p>To install the <code>secp256r1-verify</code> package in a Foundry project, execute the following command:</p>
-<pre><code class="language-sh">forge install https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify
+<pre><code class="language-sh">forge install https://github.com/get-smooth/secp256r1-verify
 </code></pre>
 <p>This command will install the latest version of the package in your lib directory. To install a specific version of the
 library, follow the instructions in the
 <a href="https://book.getfoundry.sh/reference/forge/forge-install?highlight=forge%20install#forge-install">official Foundry documentation</a>.</p>
 <h3 id="hardhat-or-truffle"><a class="header" href="#hardhat-or-truffle">Hardhat or Truffle</a></h3>
 <p>To install the <code>secp256r1-verify</code> package in a Hardhat or Truffle project, use <code>npm</code> to run the following command:</p>
-<pre><code class="language-sh">npm install @0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify
+<pre><code class="language-sh">npm install @smoo.th/secp256r1-verify
 </code></pre>
 <p>After the installation, import the package into your project and use it.</p>
-<blockquote>
-<p>⚠️ Note: This package is not published on the npm registry, and is only available on GitHub Packages. You need to be
-authenticated with GitHub Packages to install it. For more information, please refer to the
-<a href="#setup-github-registry">troubleshooting section</a>. We are willing to deploy it on the npm registry if there is a need.
-Please open an issue if you would like to see this package on the npm registry.</p>
-</blockquote>
 <h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
-<p>This repository provides an unique verification implementation. After you've integrated this library into your project,
+<p>This repository provides a unique verification implementation. After you've integrated this library into your project,
 you can freely import the <code>ECDSA256r1</code> and use it.</p>
 <blockquote>
 <p>🚨 The implementations have not been audited. DO NOT USE IT IN PRODUCTION.</p>
@@ -231,10 +229,9 @@ different implementations on-chain. Each script contains a set of instructions a
 scripts are expected to be run using the <code>forge script</code> command.</p>
 <h2 id="gas-reports"><a class="header" href="#gas-reports">Gas reports</a></h2>
 <p>These gas reports were produced using the <code>0.8.19</code> version of the Solidity compiler (with 100k optimizer runs),
-specifically for the
-<a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/releases/tag/v0.4.1"><code>0.4.1</code></a> version of the
+specifically for the <a href="https://github.com/get-smooth/secp256r1-verify/releases/tag/v0.4.1"><code>0.4.1</code></a> version of the
 library. The library version corresponds to commit
-<a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-verify/commit/4d0716fc6fd14a92488442e1dd0c18bb2c24ff41">4d0716f</a>.</p>
+<a href="https://github.com/get-smooth/secp256r1-verify/commit/4d0716fc6fd14a92488442e1dd0c18bb2c24ff41">4d0716f</a>.</p>
 <blockquote>
 <p>ℹ️ If you import the library into your project, we strongly recommend you to enable the optimizer with 100k in order
 to have the best gas consumption.</p>
@@ -341,7 +338,7 @@ enabled by default when creating a new foundry project, but in our case, it's en
 calculates 256 points on the secp256r1 elliptic curve from a public key. This is required for the variants that need
 these points to be deployed on-chain. Therefore, even if it's not explicit, every time you run the test suite, a
 Node.js script is executed multiple times. You can learn more about the library we use
-<a href="https://github.com/0x90d2b2b7fb7599eebb6e7a32980857d8/secp256r1-computation">here</a>.</li>
+<a href="https://github.com/get-smooth/secp256r1-computation">here</a>.</li>
 </ul>
 <blockquote>
 <p>📖 Cheatcodes are special instructions exposed by Foundry to enhance the developer experience. Learn more about them
@@ -362,23 +359,6 @@ make quality # run both
 </code></pre>
 <blockquote>
 <p>ℹ️ By adding the sufix <code>-fix</code> the linter and the formatter will try to fix the issues automatically.</p>
-</blockquote>
-<h2 id="troubleshootings"><a class="header" href="#troubleshootings">Troubleshootings</a></h2>
-<h3 id="setup-github-registry"><a class="header" href="#setup-github-registry">Setup Github registry</a></h3>
-<p>You need to configure npm to use the Github registry. You can do so using the following command in your terminal:</p>
-<pre><code class="language-sh">npm config set @0x90d2b2b7fb7599eebb6e7a32980857d8:registry=https://npm.pkg.github.com
-</code></pre>
-<p>This will instruct npm to use the Github registry for packages deployed by <code>@0x90d2b2b7fb7599eebb6e7a32980857d8</code>.</p>
-<p>Once the Github registry is configured, you have to create a <strong>classic</strong> token on Github. To do so, go to your
-<a href="https://github.com/settings/tokens">Github settings</a>. The token must have the read:packages scope. Once you have
-created the token, use the following command in your terminal to authenticate to the Github registry:</p>
-<pre><code class="language-sh">npm login --auth-type=legacy --registry=https://npm.pkg.github.com
-</code></pre>
-<p>Your Github username is the username, and the password is the token you just created. At this point, your git should be
-configured to use the Github Package Registry for our packages.</p>
-<blockquote>
-<p>⚠️ For more information, please refer to the
-<a href="https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#installing-a-package">GitHub documentation</a></p>
 </blockquote>
 <h2 id="acknowledgements"><a class="header" href="#acknowledgements">Acknowledgements</a></h2>
 <p>Special thanks to <a href="https://github.com/rdubois-crypto">rdubois-crypto</a> for developing the reference implementation
