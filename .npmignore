@@ -2,4 +2,7 @@
 node_modules
 
 # the directory where all the tests belong
-tests
+test
+
+# the directory where all the build files belong
+out

@@ -1,4 +1,5 @@
-> This repository is currently under development and not ready for production use ⚠️
+> ❌ This repository is deprecated. Please refer to the [crypto-lib](https://github.com/get-smooth/CryptoLib) repository
+> to find the latest implementation of the secp256r1 curve.
 
 # secp256r1 verify
 
@@ -10,21 +11,16 @@
 
 [github-editor-url]: https://github.dev/get-smooth/secp256r1-verify/tree/main
 [github-editor-badge]: https://img.shields.io/badge/Github-Open%20the%20Editor-purple?logo=github
-[gha-quality-url]:
-  https://github.com/get-smooth/secp256r1-verify/actions/workflows/quality-checks.yml
+[gha-quality-url]: https://github.com/get-smooth/secp256r1-verify/actions/workflows/quality-checks.yml
 [gha-quality-badge]:
   https://github.com/get-smooth/secp256r1-verify/actions/workflows/quality-checks.yml/badge.svg?branch=main
 [gha-test-url]: https://github.com/get-smooth/secp256r1-verify/actions/workflows/tests.yml
-[gha-test-badge]:
-  https://github.com/get-smooth/secp256r1-verify/actions/workflows/tests.yml/badge.svg?branch=main
-[gha-static-analysis-url]:
-  https://github.com/get-smooth/secp256r1-verify/actions/workflows/static-analysis.yml
+[gha-test-badge]: https://github.com/get-smooth/secp256r1-verify/actions/workflows/tests.yml/badge.svg?branch=main
+[gha-static-analysis-url]: https://github.com/get-smooth/secp256r1-verify/actions/workflows/static-analysis.yml
 [gha-static-analysis-badge]:
   https://github.com/get-smooth/template-foundry/actions/workflows/static-analysis.yml/badge.svg?branch=main
-[gha-release-url]:
-  https://github.com/get-smooth/secp256r1-verify/actions/workflows/release-package.yml
-[gha-release-badge]:
-  https://github.com/get-smooth/secp256r1-verify/actions/workflows/release-package.yml/badge.svg
+[gha-release-url]: https://github.com/get-smooth/secp256r1-verify/actions/workflows/release-package.yml
+[gha-release-badge]: https://github.com/get-smooth/secp256r1-verify/actions/workflows/release-package.yml/badge.svg
 [foundry]: https://book.getfoundry.sh/
 [foundry-badge]: https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg
 [license]: ./LICENSE.md
@@ -52,6 +48,16 @@ forge install https://github.com/get-smooth/secp256r1-verify
 This command will install the latest version of the package in your lib directory. To install a specific version of the
 library, follow the instructions in the
 [official Foundry documentation](https://book.getfoundry.sh/reference/forge/forge-install?highlight=forge%20install#forge-install).
+
+### Hardhat or Truffle
+
+To install the `secp256r1-verify` package in a Hardhat or Truffle project, use `npm` to run the following command:
+
+```sh
+npm install @smoo.th/secp256r1-verify
+```
+
+After the installation, import the package into your project and use it.
 
 ## Usage
 
@@ -82,8 +88,7 @@ scripts are expected to be run using the `forge script` command.
 ## Gas reports
 
 These gas reports were produced using the `0.8.19` version of the Solidity compiler (with 100k optimizer runs),
-specifically for the
-[`0.4.1`](https://github.com/get-smooth/secp256r1-verify/releases/tag/v0.4.1) version of the
+specifically for the [`0.4.1`](https://github.com/get-smooth/secp256r1-verify/releases/tag/v0.4.1) version of the
 library. The library version corresponds to commit
 [4d0716f](https://github.com/get-smooth/secp256r1-verify/commit/4d0716fc6fd14a92488442e1dd0c18bb2c24ff41).
 
